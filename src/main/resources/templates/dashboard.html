@@ -226,7 +226,7 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Address</th>
-                                    <th>State</th>
+                                    <th>Type</th>
                                     <th>Contact Number</th>
                                     <th>Coverage</th>
                                     <th>Action</th>
@@ -466,7 +466,7 @@
             });
     }
     function fetchHospitalData() {
-        fetchWithAuth('/list-hospital') // Replace with your API endpoint
+        fetchWithAuth('/list-of-hospital') // Replace with your API endpoint
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -481,8 +481,8 @@
                     row.innerHTML = `
                              <td>${hospital.name}</td>
                              <td>${hospital.address}</td>
-                             <td>${hospital.state}</td>
-                             <td>${hospital.contact}</td>
+                             <td>${hospital.type}</td>
+                             <td>${hospital.phoneNumber}</td>
                              <td>${hospital.coverage ? 'Yes' : 'No'}</td>
                              <td>
                              <div class="btn-group">
