@@ -20,7 +20,7 @@ public class AuthController {
     @Autowired
     AgentRepo agentRepo;
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody AuthInfoDto authInfoDto){
         Map<String, String> response = new HashMap<>();
         try {

@@ -2,6 +2,7 @@ package com.example.healthCard.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@Controller
 public class ContentDeliveryController {
         @GetMapping("/login")
         public String loginContent(){
@@ -36,7 +37,7 @@ public class ContentDeliveryController {
         return "update_password";
     }
 
-        @PostMapping("/login")
+/*        @PostMapping("/login")
         @ResponseBody
         public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> input) {
         Map<String, String> response = new HashMap<>();
@@ -49,7 +50,7 @@ public class ContentDeliveryController {
             response.put("error", "The email address or password you entered is incorrect.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-    }
+    }*/
 
         @GetMapping("/api/protected-data")
         public ResponseEntity<Map<String, String>> getProtectedData(@RequestHeader(value = "Authorization") String authHeader) {

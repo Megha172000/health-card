@@ -27,7 +27,7 @@ public class HospitalController {
         return new ResponseEntity<>(hospitalDto, HttpStatus.OK);
     }
 
-    @GetMapping("/list-hospital")
+    @GetMapping("/list-of-hospital")
     public ResponseEntity<Object> listOfHospital() {
         List<HospitalEntity> hospitalEntity =hospitalService.listHospital();
         return new ResponseEntity<>(hospitalEntity,HttpStatus.OK);
