@@ -13,7 +13,5 @@ public interface AgentRepo extends JpaRepository<AgentEntity,String> {
     Optional<AgentEntity> findByEmailAddress(String emailAddress);
     Boolean existsByEmailAddress(String emailAddress);
 
-
-
-
+    Optional<AgentEntity> findByEmailAddressAndPassword(String emailAddress, String password);
 }
