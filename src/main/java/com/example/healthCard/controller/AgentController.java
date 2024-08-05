@@ -1,6 +1,7 @@
 package com.example.healthCard.controller;
 
 import com.example.healthCard.dto.AgentInfoDto;
+import com.example.healthCard.dto.AuthInfoDto;
 import com.example.healthCard.dto.ChiefInfoDto;
 import com.example.healthCard.healthCardException.HealthCardException;
 import com.example.healthCard.model.AgentEntity;
@@ -16,7 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -135,4 +138,35 @@ public class AgentController {
         return new ResponseEntity<>("member deleted successfully",HttpStatus.OK);
     }
 
+    @GetMapping("/number-of-agentandmemebers")
+    public Map<String, Long> numOfAgentAndMembers(){
+        long agentCount = 0;
+        long chiefCount = 0;
+        Map<String,Long> count = new HashMap<>();
+        count.put("AgentCount",agentRepo.count());
+        count.put("chiefCount",chiefRepo.count());
+        return count;
+
+    }
+
+    @PostMapping("/forgot_password")
+    public ResponseEntity<Object> forgotPassword(@RequestParam String emailAddress){
+        Optional<AgentEntity> agentEntity = agentRepo.findByEmailAddress(emailAddress);
+        if(agentEntity.isEmpty()){
+            return new ResponseEntity<>("email Address is not present",HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("password Rest Sussessfully",HttpStatus.OK);
+    }
+
+    @PostMapping("/update_Password")
+    public ResponseEntity<Object> updatePassword(@RequestBody AuthInfoDto authInfoDto){
+        Optional<AgentEntity> agentEntity = agentRepo.findByEmailAddress(authInfoDto.getUsername());
+        if(agentEntity.isEmpty()){
+            return new ResponseEntity<>("email Address is not present",HttpStatus.NOT_FOUND);
+        }
+        AgentEntity agentEntity1 = agentEntity.get();
+        agentEntity1.setPassword(authInfoDto.getPassword());
+        agentRepo.save(agentEntity1);
+        return new ResponseEntity<>("Password updated sussessfully",HttpStatus.OK);
+    }
 }

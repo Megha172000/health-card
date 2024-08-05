@@ -40,4 +40,7 @@ public class AgentEntity {
 
     @Column(name = "suspended")
     private boolean suspended;
+
+    @Column(name = "password")
+    private String password;
 }
