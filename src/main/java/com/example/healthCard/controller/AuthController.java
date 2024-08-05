@@ -33,11 +33,11 @@ public class AuthController {
             return ResponseEntity.ok(response);
         }catch (HealthCardException exception){
             response.put("error", "The email address or password you entered is incorrect.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.badRequest().body(response);
         }
         catch (Exception exception){
             response.put("error", "Internal server error occurred.");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.internalServerError().body(response);
         }
     }
 }
