@@ -149,7 +149,7 @@ public class AgentController {
 
     }
 
-    @PostMapping("/forgot_password")
+    @PostMapping("/forgot-password")
     public ResponseEntity<Object> forgotPassword(@RequestParam String emailAddress){
         Optional<AgentEntity> agentEntity = agentRepo.findByEmailAddress(emailAddress);
         if(agentEntity.isEmpty()){
@@ -158,7 +158,7 @@ public class AgentController {
         return new ResponseEntity<>("password Rest Sussessfully",HttpStatus.OK);
     }
 
-    @PostMapping("/update_Password")
+    @PostMapping("/update-Password")
     public ResponseEntity<Object> updatePassword(@RequestBody AuthInfoDto authInfoDto){
         Optional<AgentEntity> agentEntity = agentRepo.findByEmailAddress(authInfoDto.getUsername());
         if(agentEntity.isEmpty()){
