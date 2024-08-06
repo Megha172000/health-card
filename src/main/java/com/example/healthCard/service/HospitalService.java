@@ -4,6 +4,9 @@ import com.example.healthCard.dto.HospitalDto;
 import com.example.healthCard.model.HospitalEntity;
 import com.example.healthCard.repo.HospitalRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,11 @@ public class HospitalService {
 
     public List<HospitalEntity> listHospital(){
         return hospitalRepo.findAll();
+    }
+
+    public Page<HospitalEntity> getHospitals(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return hospitalRepo.findAll(pageable);
     }
 
     public void removeHospital(String id){
