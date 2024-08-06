@@ -33,6 +33,26 @@
             right: 20px;
             z-index: 1050;
         }
+        .pagination-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .pagination-controls i {
+            font-size: 1.5em;
+            color: #6c757d; /* or any color you prefer */
+        }
+
+        .pagination-controls i:hover {
+            color: #264488; /* or any hover color you prefer */
+        }
+        .pagination-controls .disabled {
+            color: #ccc; /* Or any other color indicating disabled state */
+            pointer-events: none; /* Prevent any interaction with the icon */
+            cursor: default; /* Change cursor to indicate non-clickable state */
+        }
     </style>
 </head>
 <body class="grey lighten-3">
@@ -247,8 +267,9 @@
                             </table>
                         </div>
 
-                        <div id="paginationControls" class="pagination-controls">
-                            <!-- Pagination buttons will be appended here -->
+                        <div id="paginationControls" class="container-fluid pagination-controls">
+                            <i id="prevPage" class="fas fa-chevron-left" onclick="changePage(currentPage - 1)" style="cursor: pointer;"></i>
+                            <i id="nextPage" class="fas fa-chevron-right float-right" onclick="changePage(currentPage + 1)" style="cursor: pointer;"></i>
                         </div>
                         <!-- Responsive Table -->
                     </div>
@@ -564,6 +585,7 @@
                 // Append rows to the table
                 data.content.forEach(hospital => {
                     const row = document.createElement('tr');
+                    console.log(hospital.id);
                     row.innerHTML = `
                     <td>${hospital.name}</td>
                     <td>${hospital.address}</td>
@@ -577,7 +599,7 @@
                             </button>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="#" onclick="editRow(${hospital.id})">Edit</a>
-                                <a class="dropdown-item" href="#" onclick="deleteRow(${hospital.id})">Delete</a>
+                                <a class="dropdown-item" href="#" onclick="deleteRow(${encodeURIComponent(hospital.id)})">Delete</a>
                             </div>
                         </div>
                     </td>
@@ -593,19 +615,32 @@
             });
     }
     function updatePaginationControls(data) {
-        const paginationControls = document.getElementById('paginationControls');
-        paginationControls.innerHTML = ''; // Clear existing controls
+        const prevPageIcon = document.getElementById('prevPage');
+        const nextPageIcon = document.getElementById('nextPage');
 
-        // Add previous button
+        // Enable/disable previous button
         if (data.pageable.pageNumber > 0) {
-            paginationControls.innerHTML += `<button class="btn btn-secondary btn-sm" onclick="changePage(${data.pageable.pageNumber - 1})">Previous</button>`;
+            prevPageIcon.classList.remove('disabled');
+            prevPageIcon.onclick = function() { changePage(data.pageable.pageNumber - 1); };
+            prevPageIcon.style.cursor = 'pointer';
+        } else {
+            prevPageIcon.classList.add('disabled');
+            prevPageIcon.onclick = null;
+            prevPageIcon.style.cursor = 'default';
         }
 
-        // Add next button
+        // Enable/disable next button
         if (data.pageable.pageNumber < data.totalPages - 1) {
-            paginationControls.innerHTML += `<button class="btn btn-secondary btn-sm float-right" onclick="changePage(${data.pageable.pageNumber + 1})">Next</button>`;
+            nextPageIcon.classList.remove('disabled');
+            nextPageIcon.onclick = function() { changePage(data.pageable.pageNumber + 1); };
+            nextPageIcon.style.cursor = 'pointer';
+        } else {
+            nextPageIcon.classList.add('disabled');
+            nextPageIcon.onclick = null;
+            nextPageIcon.style.cursor = 'default';
         }
     }
+
     function changePage(page) {
         currentPage = page;
         fetchHospitalData(page);
@@ -737,6 +772,7 @@
                 });
         }
     }
+
     window.addEventListener('load', fetchHospitalData(0));
     window.addEventListener('load', fetchProfileData);
     window.addEventListener('load', fetchAgentData);
