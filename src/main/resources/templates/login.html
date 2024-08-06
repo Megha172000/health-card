@@ -129,15 +129,15 @@
     })
             .then(response => response.json())
             .then(data => {
-              if (data.error) {
+              if (data.code!== 1000) {
                 document.getElementById('errorDiv').style.display = 'block';
-                document.getElementById('errorMessage').textContent = data.error;
+                document.getElementById('errorMessage').textContent = data.body;
                 document.getElementById('loader').classList.remove('active');
               } else {
-                localStorage.setItem("jwtToken", data.jwt);
+                localStorage.setItem("jwtToken", data.body.jwt);
 
                 setTimeout(() => {
-                  window.location.href = data.redirectUrl; // Redirect on success
+                  window.location.href = data.body.redirectUrl; // Redirect on success
                 }, 500); // Delay to show loader before redirecting
               }
             })

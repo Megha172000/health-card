@@ -1,5 +1,6 @@
 package com.example.healthCard.controller;
 import com.example.healthCard.dto.AuthInfoDto;
+import com.example.healthCard.handler.ResponseHandler;
 import com.example.healthCard.healthCardException.HealthCardException;
 import com.example.healthCard.model.AgentEntity;
 import com.example.healthCard.repo.AgentRepo;
@@ -21,7 +22,7 @@ public class AuthController {
     AgentRepo agentRepo;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody AuthInfoDto authInfoDto){
+    public ResponseEntity<ResponseHandler> login(@RequestBody AuthInfoDto authInfoDto){
         Map<String, String> response = new HashMap<>();
         try {
             Optional<AgentEntity> optionalAgentEntity = agentRepo.findByEmailAddressAndPassword(authInfoDto.getUsername(), authInfoDto.getPassword());
@@ -30,14 +31,14 @@ public class AuthController {
             }
             response.put("jwt", "token");
             response.put("redirectUrl", "/dashboard"); // URL to redirect to on success
-            return ResponseEntity.ok(response);
+            return ResponseHandler.getSuccessResponse(response);
         }catch (HealthCardException exception){
             response.put("error", "The email address or password you entered is incorrect.");
-            return ResponseEntity.badRequest().body(response);
+            return ResponseHandler.getErrorResponse(HttpStatus.CONFLICT, exception.getErrorMessage());
         }
         catch (Exception exception){
             response.put("error", "Internal server error occurred.");
-            return ResponseEntity.internalServerError().body(response);
+            return ResponseHandler.getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getLocalizedMessage());
         }
     }
 }

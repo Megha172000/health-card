@@ -246,6 +246,58 @@
                 <!--/.Card-->
             </div>
         </div>
+
+        <div class="row wow fadeIn">
+            <!--Grid column-->
+            <div class="col-md-12 mb-4">
+                <!--Card-->
+                <div class="card">
+                    <!--Card content-->
+                    <div class="card-body">
+                        <!-- Header and Actions -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">Agent Details</h5>
+                            <!-- Actions -->
+                            <div class="d-flex align-items-center">
+                                <form class="d-flex align-items-center">
+                                    <!-- Search input -->
+                                    <input type="search" placeholder="Search..." aria-label="Search" class="form-control mr-2">
+                                    <button class="btn btn-secondary btn-sm" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </form>
+                                <!-- Add Hospital Button -->
+                                <button class="btn btn-secondary btn-sm ml-3" id="addAgentButton" data-toggle="modal" data-target="#addAgentModal">Add Agent</button>
+                            </div>
+                        </div>
+                        <!-- Responsive Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover wow animate__animated animate__fadeIn" id="agentTable">
+                                <!-- Table head -->
+                                <thead class="blue-grey lighten-4">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Contact Number</th>
+                                    <th>Active</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <!-- Table head -->
+                                <!-- Table body -->
+                                <tbody>
+                                <!-- Dynamic rows will be appended here -->
+                                </tbody>
+                                <!-- Table body -->
+                            </table>
+                        </div>
+                        <!-- Responsive Table -->
+                    </div>
+                </div>
+                <!--/.Card-->
+            </div>
+        </div>
+
         <!--Grid row-->
         <div class="row wow fadeIn">
             <!--Grid column-->
@@ -520,6 +572,43 @@
                 console.error('Error fetching hospital data:', error);
             });
     }
+    function fetchAgentData() {
+        fetchWithAuth('/list-agent') // Replace with your API endpoint
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tableBody = document.querySelector('#agentTable tbody');
+                tableBody.innerHTML = ''; // Clear any existing rows
+                data.forEach(agent => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                             <td>${agent.name}</td>
+                             <td>${agent.address}</td>
+                             <td>${agent.phoneNumber}</td>
+                             <td>${agent.active ? 'Yes' : 'No'}</td>
+                             <td>
+                             <div class="btn-group">
+                                 <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                     Actions
+                                 </button>
+                                 <div class="dropdown-menu">
+                                     <a class="dropdown-item" href="#" onclick="editRow(${agent.name})">Edit</a>
+                                     <a class="dropdown-item" href="#" onclick="deleteRow('${encodeURIComponent(agent.name)}')">Delete</a>
+                                 </div>
+                             </div>
+                         </td>
+                         `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching agent data:', error);
+            });
+    }
     function editRow(hospitalId) {
         // Logic to handle editing a row
         console.log('Edit hospital with ID:', hospitalId);
@@ -546,6 +635,7 @@
     }
     window.addEventListener('load', fetchHospitalData);
     window.addEventListener('load', fetchProfileData);
+    window.addEventListener('load', fetchAgentData);
 
     document.getElementById('scrollToTable').addEventListener('click', function (e) {
         e.preventDefault();
