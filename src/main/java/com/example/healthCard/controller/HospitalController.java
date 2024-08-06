@@ -21,7 +21,7 @@ public class HospitalController {
     HospitalService hospitalService;
 
 
-    @PostMapping("/hospital-entry")
+    @PostMapping("/add-hospital")
     public ResponseEntity<Object> hospitalEntry(@RequestBody HospitalDto hospitalDto) {
         hospitalService.addHospital(hospitalDto);
         return new ResponseEntity<>(hospitalDto, HttpStatus.OK);
