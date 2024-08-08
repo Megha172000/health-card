@@ -30,6 +30,9 @@ public class AgentService {
     @Autowired
     MemberRepo memberRepo;
 
+    @Autowired
+    EmailService emailService;
+
     public void addAgent(AgentInfoDto agentInfoDto){
         AgentEntity agentEntity = new AgentEntity();
         agentEntity.setName(agentInfoDto.getName());
@@ -41,7 +44,7 @@ public class AgentService {
         agentEntity.setActivationStatus(false);
         agentEntity.setSuspended(false);
         agentRepo.save(agentEntity);
-
+        emailService.sendTempEmail(agentInfoDto.getName(),agentInfoDto.getEmail(),"Activation email");
     }
 
     public List<AgentEntity> ListOfAgent(){
