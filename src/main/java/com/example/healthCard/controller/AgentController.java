@@ -38,6 +38,9 @@ public class AgentController {
     @Autowired
     MemberRepo memberRepo;
 
+    @Autowired
+    EmailController emailController;
+
 
     @PostMapping("/add-agent")
     public ResponseEntity<Object> AddAgent(@RequestBody AgentInfoDto agentInfoDto) {
@@ -47,6 +50,7 @@ public class AgentController {
         }
         agentService.addAgent(agentInfoDto);
         return new ResponseEntity<>(agentInfoDto, HttpStatus.OK);
+
     }
 
     @GetMapping("/list-agent")

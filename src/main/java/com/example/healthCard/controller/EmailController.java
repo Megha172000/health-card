@@ -17,6 +17,6 @@ public class EmailController {
     @ResponseBody
     public String sendEmail() {
         emailService.sendEmail("meghapatidar172000@gmail.com", "Test Email", "John Doe");
-        return "Emailtemp";
+        return "email";
     }
 }
