@@ -62,8 +62,8 @@
     <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
         <div class="container-fluid">
             <!-- Brand -->
-            <a class="navbar-brand waves-effect" href="https://mdbootstrap.com/docs/jquery/" target="_blank">
-                <strong class="blue-text">MDB</strong>
+            <a class="navbar-brand waves-effect" href="#" target="_blank">
+                <strong class="blue-text">Home</strong>
             </a>
             <!-- Collapse -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -74,23 +74,13 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <!-- Left -->
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link waves-effect" href="#">Home
+                    <li class="nav-item">
+                        <a class="nav-link waves-effect" id="navBarHospitalScroll" href="#hospitalTable">Hospitals
                             <span class="sr-only">(current)</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link waves-effect" href="https://mdbootstrap.com/docs/jquery/" target="_blank">About
-                            MDB</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link waves-effect" href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
-                           target="_blank">Free
-                            download</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link waves-effect" href="https://mdbootstrap.com/education/bootstrap/" target="_blank">Free
-                            tutorials</a>
+                        <a class="nav-link waves-effect" id="navBarAgentScroll" href="#agentTable" target="_blank">Agents</a>
                     </li>
                 </ul>
                 <!-- Right -->
@@ -554,10 +544,10 @@
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: ["March", "April", "May", "June", "July", "August"],
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
+                label: 'Number of customers in last 6 months',
+                data: [200, 120, 115, 100, 200, 150],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -934,6 +924,30 @@
         });
     });
     document.getElementById('scrollToAgentTable').addEventListener('click', function (e) {
+        e.preventDefault();
+        const tableElement = document.getElementById('agentTable');
+        const headerOffset = 150; // Adjust this value to match the height of your fixed navbar
+        const elementPosition = tableElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    });
+    document.getElementById('navBarHospitalScroll').addEventListener('click', function (e) {
+        e.preventDefault();
+        const tableElement = document.getElementById('hospitalTable');
+        const headerOffset = 150; // Adjust this value to match the height of your fixed navbar
+        const elementPosition = tableElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    });
+    document.getElementById('navBarAgentScroll').addEventListener('click', function (e) {
         e.preventDefault();
         const tableElement = document.getElementById('agentTable');
         const headerOffset = 150; // Adjust this value to match the height of your fixed navbar
