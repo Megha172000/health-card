@@ -62,8 +62,8 @@
     <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
         <div class="container-fluid">
             <!-- Brand -->
-            <a class="navbar-brand waves-effect" href="https://mdbootstrap.com/docs/jquery/" target="_blank">
-                <strong class="blue-text">MDB</strong>
+            <a class="navbar-brand waves-effect" href="#" target="_blank">
+                <strong class="blue-text">Home</strong>
             </a>
             <!-- Collapse -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -74,23 +74,13 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <!-- Left -->
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link waves-effect" href="#">Home
+                    <li class="nav-item">
+                        <a class="nav-link waves-effect" id="navBarHospitalScroll" href="#hospitalTable">Hospitals
                             <span class="sr-only">(current)</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link waves-effect" href="https://mdbootstrap.com/docs/jquery/" target="_blank">About
-                            MDB</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link waves-effect" href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
-                           target="_blank">Free
-                            download</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link waves-effect" href="https://mdbootstrap.com/education/bootstrap/" target="_blank">Free
-                            tutorials</a>
+                        <a class="nav-link waves-effect" id="navBarAgentScroll" href="#agentTable" target="_blank">Agents</a>
                     </li>
                 </ul>
                 <!-- Right -->
@@ -119,13 +109,13 @@
     <!-- Sidebar -->
     <div class="sidebar-fixed position-fixed">
         <a class="logo-wrapper waves-effect">
-            <img src="/images/logo.png" class="img-fluid" style="width: 500px; height: 500px;" alt="">
+            <img src="/images/logo2.png" class="img-fluid" alt="">
         </a>
         <div class="list-group list-group-flush">
             <a href="#" class="list-group-item active waves-effect">
                 <i class="fas fa-chart-pie mr-3"></i>Dashboard
             </a>
-            <a href="#" class="list-group-item list-group-item-action waves-effect">
+            <a href="#agentTable" class="list-group-item list-group-item-action waves-effect" id="scrollToAgentTable">
                 <i class="fas fa-table mr-3"></i>Agents</a>
             <a href="#hospitalTable" class="list-group-item list-group-item-action waves-effect" id="scrollToTable">
                 <i class="fas fa-user mr-3"></i>Hospitals</a>
@@ -241,7 +231,7 @@
                                     </button>
                                 </form>
                                 <!-- Add Hospital Button -->
-                                <button class="btn btn-secondary btn-sm ml-3" id="addRowButton" data-toggle="modal" data-target="#addHospitalModal">Add Hospital</button>
+                                <button class="btn btn-secondary btn-sm ml-3" style="color: #0b2e13" id="addRowButton" data-toggle="modal" data-target="#addHospitalModal">Add Hospital</button>
                             </div>
                         </div>
                         <!-- Responsive Table -->
@@ -250,7 +240,7 @@
                                 <!-- Table head -->
                                 <thead class="blue-grey lighten-4">
                                 <tr>
-                                    <th>Name</th>`
+                                    <th>Name</th>
                                     <th>Address</th>
                                     <th>Type</th>
                                     <th>Contact Number</th>
@@ -297,7 +287,7 @@
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </form>
-                                <!-- Add Hospital Button -->
+                                <!-- Add Agent Button -->
                                 <button class="btn btn-secondary btn-sm ml-3" id="addAgentButton" data-toggle="modal" data-target="#addAgentModal">Add Agent</button>
                             </div>
                         </div>
@@ -308,8 +298,11 @@
                                 <thead class="blue-grey lighten-4">
                                 <tr>
                                     <th>Name</th>
-                                    <th>Address</th>
+                                    <th>Email</th>
                                     <th>Contact Number</th>
+                                    <th>Address</th>
+                                    <th>Identity Type</th>
+                                    <th>Identity Number</th>
                                     <th>Active</th>
                                     <th>Action</th>
                                 </tr>
@@ -337,27 +330,6 @@
                 <div class="card">
                     <!--Section: Modals-->
                     <section>
-                        <!--Modal: Login / Register Form Demo-->
-                        <div class="modal fade" id="modalLRFormDemo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                             aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalLabel">Delete hospital</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <span>Are you sure you want to delete this hospital?</span>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">Save changes</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         <!--Modal: Login / Register Form Demo-->
                         <div class="modal fade" id="addHospitalModal" tabindex="-1" role="dialog" aria-labelledby="addHospitalModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
@@ -389,6 +361,94 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary btn-md ml-3 waves-effect waves-light" data-dismiss="modal">Close</button>
                                                 <button type="button" id="addHospitalSubmitBtn" class="btn btn-secondary btn-md ml-3 waves-effect waves-light">Save changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Add agent modal-->
+                        <div class="modal fade" id="addAgentModal" tabindex="-1" role="dialog" aria-labelledby="addAgentModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addAgentModalLabel">Add new Agent</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="addAgentForm">
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="text" id="agentName" name="agentName" class="form-control form-control-lg" required />
+                                                <label class="form-label" for="agentName">Full name</label>
+                                            </div>
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="text" id="agentAddress" name="agentAddress" class="form-control form-control-lg" required />
+                                                <label class="form-label" for="agentAddress">Address</label>
+                                            </div>
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="text" id="agentNumber" name="agentNumber" class="form-control form-control-lg" required />
+                                                <label class="form-label" for="agentNumber">Contact number</label>
+                                            </div>
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="text" id="agentEmail" name="agentEmail" class="form-control form-control-lg" required />
+                                                <label class="form-label" for="agentEmail">Email address</label>
+                                            </div>
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="text" id="agentIdentityType" name="agentIdentityType" class="form-control form-control-lg" required />
+                                                <label class="form-label" for="agentIdentityType">Identity type</label>
+                                            </div>
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="text" id="agentIdentityNumber" name="agentIdentityNumber" class="form-control form-control-lg" required />
+                                                <label class="form-label" for="agentIdentityNumber">Identity number</label>
+                                            </div>
+                                            <!--<div class="pt-1 mb-4">
+                                                <button id="submitButton" class="btn btn-secondary btn-lg btn-block waves-effect waves-light" data-mdb-button-init data-mdb-ripple-init
+                                                        type="button">Submit</button>
+                                            </div>-->
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-md ml-3 waves-effect waves-light" data-dismiss="modal">Close</button>
+                                                <button type="button" id="addAgentSubmitBtn" class="btn btn-secondary btn-md ml-3 waves-effect waves-light">Save changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="modal fade" id="editHospitalModal" tabindex="-1" role="dialog" aria-labelledby="editHospitalModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editHospitalModalLabel">Add new hospital</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="editHospitalModalForm">
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="text" id="editHospitalName" name="editHospitalName" class="form-control form-control-lg" required />
+                                                <label class="form-label" for="editHospitalName">Full name</label>
+                                            </div>
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="text" id="editHospitalAddress" name="editHospitalAddress" class="form-control form-control-lg" required />
+                                                <label class="form-label" for="editHospitalAddress">Address</label>
+                                            </div>
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="text" id="editHospitalNumber" name="editHospitalNumber" class="form-control form-control-lg" required />
+                                                <label class="form-label" for="editHospitalNumber">Contact number</label>
+                                            </div>
+                                            <!--<div class="pt-1 mb-4">
+                                                <button id="submitButton" class="btn btn-secondary btn-lg btn-block waves-effect waves-light" data-mdb-button-init data-mdb-ripple-init
+                                                        type="button">Submit</button>
+                                            </div>-->
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary btn-md ml-3 waves-effect waves-light" data-dismiss="modal">Close</button>
+                                                <button type="button" id="editHospitalSubmitBtn" class="btn btn-secondary btn-md ml-3 waves-effect waves-light">Save changes</button>
                                             </div>
                                         </form>
                                     </div>
@@ -484,10 +544,10 @@
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: ["March", "April", "May", "June", "July", "August"],
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
+                label: 'Number of customers in last 6 months',
+                data: [200, 120, 115, 100, 200, 150],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -599,7 +659,7 @@
                             </button>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="#" onclick="editRow(${hospital.id})">Edit</a>
-                                <a class="dropdown-item" href="#" onclick="deleteRow(${encodeURIComponent(hospital.id)})">Delete</a>
+                                <a class="dropdown-item" href="#" onclick="deleteRow('${hospital.id}'); return false;">Delete</a>
                             </div>
                         </div>
                     </td>
@@ -660,8 +720,11 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                              <td>${agent.name}</td>
-                             <td>${agent.address}</td>
+                             <td>${agent.emailAddress}</td>
                              <td>${agent.phoneNumber}</td>
+                             <td>${agent.address}</td>
+                             <td>${agent.identityType}</td>
+                             <td>${agent.identityNumber}</td>
                              <td>${agent.active ? 'Yes' : 'No'}</td>
                              <td>
                              <div class="btn-group">
@@ -669,8 +732,8 @@
                                      Actions
                                  </button>
                                  <div class="dropdown-menu">
-                                     <a class="dropdown-item" href="#" onclick="editRow(${agent.name})">Edit</a>
-                                     <a class="dropdown-item" href="#" onclick="deleteRow('${encodeURIComponent(agent.name)}')">Delete</a>
+                                     <a class="dropdown-item" href="#" onclick="editRow(${agent.id})">Edit</a>
+                                     <a class="dropdown-item" href="#" onclick="deleteAgent('${agent.id}'); return false;">Delete</a>
                                  </div>
                              </div>
                          </td>
@@ -722,6 +785,53 @@
                 showToast('Hospital details added successfully', 'danger');
             });
     });
+
+    document.getElementById('addAgentSubmitBtn').addEventListener('click', function() {
+        // Get form values
+        const name = document.getElementById('agentName').value;
+        const address = document.getElementById('agentAddress').value;
+        const number = document.getElementById('agentNumber').value;
+        const email = document.getElementById('agentEmail').value;
+        const identityType = document.getElementById('agentIdentityType').value;
+        const identityNumber = document.getElementById('agentIdentityNumber').value;
+
+        // Prepare JSON data
+        const agentData = {
+            name: name,
+            address: address,
+            phoneNumber: number,
+            identityType: identityType,
+            identityNumber: identityNumber,
+            email: email
+        };
+
+        // Make fetch API call
+        fetchWithAuth('/add-agent', { // Replace with your API endpoint
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(agentData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Agent details added successfully:', data);
+                fetchAgentData();
+                document.getElementById('addAgentForm').reset();
+                $('.modal').modal('hide'); // Assuming you are using jQuery for modal
+                showToast('Agent details added successfully');
+            })
+            .catch(error => {
+                console.error('Failed to add agent details:', error);
+                showToast('Error occurred while adding agent details.', 'danger');
+            });
+    });
+
     // Function to show toast notification
     function showToast(message, type = 'success') {
         const toastContainer = document.querySelector('.toast-container');
@@ -754,8 +864,8 @@
     }
     function deleteRow(hospitalId) {
         if (confirm('Are you sure you want to delete this hospital?')) {
-            console.error('Received request to delete :', decodeURIComponent(hospitalId));
-            fetchWithAuth(`/remove-hospital?id=${hospitalId}`, { method: 'DELETE' }) // Replace with your API endpoint and method
+            console.log(`Received request to delete: ${hospitalId}`);
+            fetchWithAuth(`/remove-hospital?id=${hospitalId}`, { method: 'DELETE' })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -763,12 +873,36 @@
                     return response.json();
                 })
                 .then(response => {
-                    // Remove the row from the table after successful deletion
+                    // Show toast notification
                     showToast(response.body);
+                    // Fetch updated data
                     fetchHospitalData(0);
                 })
                 .catch(error => {
                     console.error('Error deleting hospital data:', error);
+                });
+        }
+    }
+
+    function deleteAgent(agentId) {
+        if (confirm('Are you sure you want to delete this agent?')) {
+            console.log(`Received request to delete: ${agentId}`);
+            fetchWithAuth(`/remove-agent?id=${agentId}`, { method: 'DELETE' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(response => {
+                    // Show toast notification
+                    showToast(response.body);
+                    // Fetch updated data
+                    fetchAgentData();
+                })
+                .catch(error => {
+                    console.error('Error deleting hospital data:', error);
+                    showToast("Error deleting agent.", 'danger');
                 });
         }
     }
@@ -780,6 +914,42 @@
     document.getElementById('scrollToTable').addEventListener('click', function (e) {
         e.preventDefault();
         const tableElement = document.getElementById('hospitalTable');
+        const headerOffset = 150; // Adjust this value to match the height of your fixed navbar
+        const elementPosition = tableElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    });
+    document.getElementById('scrollToAgentTable').addEventListener('click', function (e) {
+        e.preventDefault();
+        const tableElement = document.getElementById('agentTable');
+        const headerOffset = 150; // Adjust this value to match the height of your fixed navbar
+        const elementPosition = tableElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    });
+    document.getElementById('navBarHospitalScroll').addEventListener('click', function (e) {
+        e.preventDefault();
+        const tableElement = document.getElementById('hospitalTable');
+        const headerOffset = 150; // Adjust this value to match the height of your fixed navbar
+        const elementPosition = tableElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    });
+    document.getElementById('navBarAgentScroll').addEventListener('click', function (e) {
+        e.preventDefault();
+        const tableElement = document.getElementById('agentTable');
         const headerOffset = 150; // Adjust this value to match the height of your fixed navbar
         const elementPosition = tableElement.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;

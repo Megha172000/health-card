@@ -8,6 +8,9 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class AgentInfoDto {
+    @JsonProperty(value = "id")
+    private String id;
+
     @JsonProperty(value = "name")
     private String name;
 
@@ -21,11 +24,8 @@ public class AgentInfoDto {
     private String identityNumber;
 
     @JsonProperty(value = "address")
-    private String Address;
+    private String address;
 
     @JsonProperty(value = "phoneNumber")
     private long phoneNumber;
-
-    @JsonProperty(value = "id")
-    private String id;
 }

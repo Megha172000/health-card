@@ -3,6 +3,7 @@ package com.example.healthCard.controller;
 import com.example.healthCard.dto.AgentInfoDto;
 import com.example.healthCard.dto.AuthInfoDto;
 import com.example.healthCard.dto.ChiefInfoDto;
+import com.example.healthCard.handler.ResponseHandler;
 import com.example.healthCard.healthCardException.HealthCardException;
 import com.example.healthCard.model.AgentEntity;
 import com.example.healthCard.model.ChiefEntity;
@@ -43,7 +44,7 @@ public class AgentController {
 
 
     @PostMapping("/add-agent")
-    public ResponseEntity<Object> AddAgent(@RequestBody AgentInfoDto agentInfoDto) {
+    public ResponseEntity<Object> addAgent(@RequestBody AgentInfoDto agentInfoDto) {
         String emailAddress = agentInfoDto.getEmail();
         if (agentRepo.existsByEmailAddress(emailAddress)) {
             throw new HealthCardException("user already exist",450);
@@ -60,12 +61,12 @@ public class AgentController {
     }
 
     @DeleteMapping("/remove-agent")
-    public ResponseEntity<Object> deleteAgent(@RequestParam String id){
+    public ResponseEntity<ResponseHandler> deleteAgent(@RequestParam String id){
         if(agentRepo.findById(id).isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseHandler.getErrorResponse(HttpStatus.NOT_FOUND, "Agent with id not found.");
         }
         agentService.deleteAgent(id);
-        return new ResponseEntity<>("Agent deleted successfully",HttpStatus.OK);
+        return ResponseHandler.getSuccessResponse("Agent deleted successfully.");
     }
 
     @PutMapping("/agent-suspension")

@@ -20,8 +20,11 @@ public class AgentEntity {
     @OneToMany(mappedBy = "agentEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ChiefEntity> chiefEntityList;
 
-    @Column(name = "email_Address")
+    @Column(name = "email_address")
     private String emailAddress;
+
+    @Column(name = "phone_number")
+    private Long phoneNumber;
 
     @Column(name = "name")
     private String name;
