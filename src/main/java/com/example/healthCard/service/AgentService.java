@@ -34,12 +34,14 @@ public class AgentService {
         AgentEntity agentEntity = new AgentEntity();
         agentEntity.setName(agentInfoDto.getName());
         agentEntity.setEmailAddress(agentInfoDto.getEmail());
+        agentEntity.setPhoneNumber(agentInfoDto.getPhoneNumber());
         agentEntity.setIdentityType(agentInfoDto.getIdentityType());
         agentEntity.setAddress(agentInfoDto.getAddress());
         agentEntity.setIdentityNumber(agentInfoDto.getIdentityNumber());
         agentEntity.setActivationStatus(false);
         agentEntity.setSuspended(false);
         agentRepo.save(agentEntity);
+
     }
 
     public List<AgentEntity> ListOfAgent(){
