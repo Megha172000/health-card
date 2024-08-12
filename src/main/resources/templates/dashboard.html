@@ -53,6 +53,22 @@
             pointer-events: none; /* Prevent any interaction with the icon */
             cursor: default; /* Change cursor to indicate non-clickable state */
         }
+        .btn.teal-color-button,
+        .btn.teal-color-button:hover,
+        .btn.teal-color-button:focus,
+        .btn.teal-color-button:active,
+        .btn.teal-color-button:active:focus {
+            background-color: teal !important;
+            border-color: teal !important;
+            color: #fff !important; /* Ensures text remains visible */
+        }
+        .primary-color-dark,
+        .list-group-item.active{
+            background-color: teal !important;
+        }
+        .teal-text{
+            color: teal !important;
+        }
     </style>
 </head>
 <body class="grey lighten-3">
@@ -63,7 +79,7 @@
         <div class="container-fluid">
             <!-- Brand -->
             <a class="navbar-brand waves-effect" href="#" target="_blank">
-                <strong class="blue-text">Home</strong>
+                <strong class="teal-text">Home</strong>
             </a>
             <!-- Collapse -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -141,7 +157,7 @@
                 <form class="d-flex justify-content-center">
                     <!-- Default input -->
                     <input type="search" placeholder="Type your query" aria-label="Search" class="form-control">
-                    <button class="btn btn-primary btn-sm my-0 p" type="submit">
+                    <button class="btn btn-primary btn-sm my-0 p teal-color-button" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
@@ -226,12 +242,12 @@
                                 <form class="d-flex align-items-center">
                                     <!-- Search input -->
                                     <input type="search" placeholder="Search..." aria-label="Search" class="form-control mr-2">
-                                    <button class="btn btn-secondary btn-sm" type="submit">
+                                    <button class="btn btn-secondary btn-sm teal-color-button" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </form>
                                 <!-- Add Hospital Button -->
-                                <button class="btn btn-secondary btn-sm ml-3" style="color: #0b2e13" id="addRowButton" data-toggle="modal" data-target="#addHospitalModal">Add Hospital</button>
+                                <button class="btn btn-secondary btn-sm ml-3 teal-color-button" style="color: #0b2e13" id="addRowButton" data-toggle="modal" data-target="#addHospitalModal">Add Hospital</button>
                             </div>
                         </div>
                         <!-- Responsive Table -->
@@ -283,12 +299,12 @@
                                 <form class="d-flex align-items-center">
                                     <!-- Search input -->
                                     <input type="search" placeholder="Search..." aria-label="Search" class="form-control mr-2">
-                                    <button class="btn btn-secondary btn-sm" type="submit">
+                                    <button class="btn btn-secondary btn-sm teal-color-button" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </form>
                                 <!-- Add Agent Button -->
-                                <button class="btn btn-secondary btn-sm ml-3" id="addAgentButton" data-toggle="modal" data-target="#addAgentModal">Add Agent</button>
+                                <button class="btn btn-secondary btn-sm ml-3 teal-color-button" id="addAgentButton" data-toggle="modal" data-target="#addAgentModal">Add Agent</button>
                             </div>
                         </div>
                         <!-- Responsive Table -->
@@ -359,8 +375,8 @@
                                                         type="button">Submit</button>
                                             </div>-->
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary btn-md ml-3 waves-effect waves-light" data-dismiss="modal">Close</button>
-                                                <button type="button" id="addHospitalSubmitBtn" class="btn btn-secondary btn-md ml-3 waves-effect waves-light">Save changes</button>
+                                                <button type="button" class="btn btn-secondary btn-md ml-3 waves-effect waves-light teal-color-button" data-dismiss="modal">Close</button>
+                                                <button type="button" id="addHospitalSubmitBtn" class="btn btn-secondary btn-md ml-3 waves-effect waves-light teal-color-button">Save changes</button>
                                             </div>
                                         </form>
                                     </div>
@@ -409,8 +425,8 @@
                                                         type="button">Submit</button>
                                             </div>-->
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary btn-md ml-3 waves-effect waves-light" data-dismiss="modal">Close</button>
-                                                <button type="button" id="addAgentSubmitBtn" class="btn btn-secondary btn-md ml-3 waves-effect waves-light">Save changes</button>
+                                                <button type="button" class="btn btn-secondary btn-md ml-3 waves-effect waves-light teal-color-button" data-dismiss="modal">Close</button>
+                                                <button type="button" id="addAgentSubmitBtn" class="btn btn-secondary btn-md ml-3 waves-effect waves-light teal-color-button">Save changes</button>
                                             </div>
                                         </form>
                                     </div>
@@ -447,8 +463,8 @@
                                                         type="button">Submit</button>
                                             </div>-->
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary btn-md ml-3 waves-effect waves-light" data-dismiss="modal">Close</button>
-                                                <button type="button" id="editHospitalSubmitBtn" class="btn btn-secondary btn-md ml-3 waves-effect waves-light">Save changes</button>
+                                                <button type="button" class="btn btn-secondary btn-md ml-3 waves-effect waves-light teal-color-button" data-dismiss="modal">Close</button>
+                                                <button type="button" id="editHospitalSubmitBtn" class="btn btn-secondary btn-md ml-3 waves-effect waves-light teal-color-button">Save changes</button>
                                             </div>
                                         </form>
                                     </div>
@@ -654,7 +670,7 @@
                     <td>${hospital.coverage ? 'Yes' : 'No'}</td>
                     <td>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button type="button" class="btn btn-secondary dropdown-toggle btn-sm teal-color-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Actions
                             </button>
                             <div class="dropdown-menu">
@@ -728,7 +744,7 @@
                              <td>${agent.active ? 'Yes' : 'No'}</td>
                              <td>
                              <div class="btn-group">
-                                 <button type="button" class="btn btn-secondary dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                 <button type="button" class="btn btn-secondary dropdown-toggle btn-sm teal-color-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                      Actions
                                  </button>
                                  <div class="dropdown-menu">
