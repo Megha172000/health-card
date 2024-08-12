@@ -7,13 +7,13 @@ import com.example.healthCard.handler.ResponseHandler;
 import com.example.healthCard.healthCardException.HealthCardException;
 import com.example.healthCard.model.AgentEntity;
 import com.example.healthCard.model.ChiefEntity;
-import com.example.healthCard.model.HospitalEntity;
 import com.example.healthCard.model.MemberEntity;
 import com.example.healthCard.repo.AgentRepo;
 import com.example.healthCard.repo.ChiefRepo;
 import com.example.healthCard.repo.MemberRepo;
 import com.example.healthCard.service.AgentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,9 +55,9 @@ public class AgentController {
     }
 
     @GetMapping("/list-agent")
-    public ResponseEntity<Object> listOfAgent(){
-        List<AgentEntity> agentEntityList = agentService.ListOfAgent();
-        return new ResponseEntity<>(agentEntityList , HttpStatus.OK);
+    public Page<AgentEntity> listOfAgent(@RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "5") int size){
+        return agentService.listAgents(page, size);
     }
 
     @DeleteMapping("/remove-agent")

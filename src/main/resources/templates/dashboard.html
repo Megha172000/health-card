@@ -177,7 +177,7 @@
             <!--Card content-->
             <div class="card-body d-sm-flex justify-content-between">
                 <h4 class="mb-2 mb-sm-0 pt-1">
-                    <span id="welcomeDisplay"></span>
+                    <span id="welcomeDisplay">Welcome Admin,</span>
                 </h4>
                 <form class="d-flex justify-content-center">
                     <!-- Default input -->
@@ -355,6 +355,11 @@
                                 </tbody>
                                 <!-- Table body -->
                             </table>
+                        </div>
+
+                        <div id="agentPaginationControls" class="container-fluid pagination-controls">
+                            <i id="prevPageAgent" class="fas fa-chevron-left" onclick="changeAgentPage(currentAgentPage - 1)" style="cursor: pointer;"></i>
+                            <i id="nextPageAgent" class="fas fa-chevron-right float-right" onclick="changeAgentPage(currentAgentPage + 1)" style="cursor: pointer;"></i>
                         </div>
                         <!-- Responsive Table -->
                     </div>
@@ -659,22 +664,6 @@
         }
         return fetch(url, options);
     }
-    function fetchProfileData() {
-        fetchWithAuth('/profile') // Replace with your API endpoint
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                document.getElementById('welcomeDisplay').textContent = 'Welcome ' + data.name + ',';
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                document.getElementById('welcomeDisplay').textContent = 'Error fetching data: ' + error.message;
-            });
-    }
     let currentPage = 0;
     const pageSize = 5; // Number of items per page
     function fetchHospitalData(page = 0) {
@@ -752,8 +741,10 @@
         currentPage = page;
         fetchHospitalData(page);
     }
-    function fetchAgentData() {
-        fetchWithAuth('/list-agent') // Replace with your API endpoint
+    let currentAgentPage = 0;
+    const agentPageSize = 5; // Number of items per page
+    function fetchAgentData(page =0) {
+        fetchWithAuth(`/list-agent?page=${page}&size=${agentPageSize}`) // Replace with your API endpoint
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -763,7 +754,7 @@
             .then(data => {
                 const tableBody = document.querySelector('#agentTable tbody');
                 tableBody.innerHTML = ''; // Clear any existing rows
-                data.forEach(agent => {
+                data.content.forEach(agent => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                              <td>${agent.name}</td>
@@ -786,12 +777,46 @@
                          </td>
                          `;
                     tableBody.appendChild(row);
+                    updateAgentPaginationControls(data);
                 });
             })
             .catch(error => {
                 console.error('Error fetching agent data:', error);
             });
     }
+
+    function updateAgentPaginationControls(data) {
+        const prevPageIcon = document.getElementById('prevPageAgent');
+        const nextPageIcon = document.getElementById('nextPageAgent');
+
+        // Enable/disable previous button
+        if (data.pageable.pageNumber > 0) {
+            prevPageIcon.classList.remove('disabled');
+            prevPageIcon.onclick = function() { changeAgentPage(data.pageable.pageNumber - 1); };
+            prevPageIcon.style.cursor = 'pointer';
+        } else {
+            prevPageIcon.classList.add('disabled');
+            prevPageIcon.onclick = null;
+            prevPageIcon.style.cursor = 'default';
+        }
+
+        // Enable/disable next button
+        if (data.pageable.pageNumber < data.totalPages - 1) {
+            nextPageIcon.classList.remove('disabled');
+            nextPageIcon.onclick = function() { changeAgentPage(data.pageable.pageNumber + 1); };
+            nextPageIcon.style.cursor = 'pointer';
+        } else {
+            nextPageIcon.classList.add('disabled');
+            nextPageIcon.onclick = null;
+            nextPageIcon.style.cursor = 'default';
+        }
+    }
+
+    function changeAgentPage(page) {
+        currentAgentPage = page;
+        fetchAgentData(page);
+    }
+
     document.getElementById('addHospitalSubmitBtn').addEventListener('click', function() {
         // Get form values
         const name = document.getElementById('name').value;
@@ -869,7 +894,7 @@
             })
             .then(data => {
                 console.log('Agent details added successfully:', data);
-                fetchAgentData();
+                fetchAgentData(0);
                 document.getElementById('addAgentForm').reset();
                 $('.modal').modal('hide'); // Assuming you are using jQuery for modal
                 showToast('Agent details added successfully');
@@ -949,7 +974,7 @@
                     // Show toast notification
                     showToast(response.body);
                     // Fetch updated data
-                    fetchAgentData();
+                    fetchAgentData(0);
                 })
                 .catch(error => {
                     console.error('Error deleting hospital data:', error);
@@ -959,8 +984,7 @@
     }
 
     window.addEventListener('load', fetchHospitalData(0));
-    window.addEventListener('load', fetchProfileData);
-    window.addEventListener('load', fetchAgentData);
+    window.addEventListener('load', fetchAgentData(0));
 
     document.getElementById('scrollToTable').addEventListener('click', function (e) {
         e.preventDefault();
