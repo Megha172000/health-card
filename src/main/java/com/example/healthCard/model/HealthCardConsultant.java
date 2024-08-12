@@ -1,6 +1,7 @@
 package com.example.healthCard.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "health_card_consultant")
 public class HealthCardConsultant {
     @Id
@@ -32,10 +34,5 @@ public class HealthCardConsultant {
     private String healthCardId;
 
     @Column(name = "visited_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date visitedAt;
-
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private Long visitedTimeStamp;
 }
