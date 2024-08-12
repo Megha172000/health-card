@@ -20,6 +20,14 @@ public class HealthCardConsultant {
     @JoinColumn(name = "hospital_id", nullable = false)
     private HospitalEntity hospitalEntity;
 
+    @ManyToOne
+    @JoinColumn(name = "chief_member_id", nullable = true)
+    private ChiefEntity chiefEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id", nullable = true)
+    private MemberEntity memberEntity;
+
     @Column(name = "healthcard_id")
     private String healthCardId;
 

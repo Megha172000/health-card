@@ -20,6 +20,9 @@ public class ChiefEntity {
     @OneToMany(mappedBy = "chiefEntity",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<MemberEntity> memberEntityList;
 
+    @OneToMany(mappedBy = "chiefEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<HealthCardConsultant> consultations;
+
     // Use a different column name for the foreign key reference
     @ManyToOne
     @JoinColumn(name = "hospital_id", nullable = false)
