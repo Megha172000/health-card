@@ -47,9 +47,12 @@ public class AgentService {
         emailService.sendTempEmail(agentInfoDto.getName(),agentInfoDto.getEmail(),"Activation email");
     }
 
-    public Page<AgentEntity> listAgents(int page, int size){
+    public Page<AgentEntity> listAgents(int page, int size, String filter){
         Pageable pageable = PageRequest.of(page, size);
-        return agentRepo.findAll(pageable);
+        if (filter==null){
+            return agentRepo.findAll(pageable);
+        }
+        return agentRepo.findAllByEmailAddressContainsOrNameContains(filter, filter, pageable);
     }
 
     public void deleteAgent(String id){

@@ -264,9 +264,9 @@
                             <h5 class="mb-0">Hospital Details</h5>
                             <!-- Actions -->
                             <div class="d-flex align-items-center">
-                                <form class="d-flex align-items-center">
+                                <form class="d-flex align-items-center" onsubmit="fetchHospitalData(0); return false;">
                                     <!-- Search input -->
-                                    <input type="search" placeholder="Search..." aria-label="Search" class="form-control mr-2">
+                                    <input type="search" id="hospitalSearchFilter" placeholder="Search..." aria-label="Search" class="form-control mr-2">
                                     <button class="btn btn-secondary btn-sm teal-color-button" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
@@ -321,9 +321,9 @@
                             <h5 class="mb-0">Agent Details</h5>
                             <!-- Actions -->
                             <div class="d-flex align-items-center">
-                                <form class="d-flex align-items-center">
+                                <form class="d-flex align-items-center" onsubmit="fetchAgentData(0); return false;">
                                     <!-- Search input -->
-                                    <input type="search" placeholder="Search..." aria-label="Search" class="form-control mr-2">
+                                    <input type="search" id="agentSearchFilter" placeholder="Search..." aria-label="Search" class="form-control mr-2">
                                     <button class="btn btn-secondary btn-sm teal-color-button" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
@@ -667,7 +667,13 @@
     let currentPage = 0;
     const pageSize = 5; // Number of items per page
     function fetchHospitalData(page = 0) {
-        fetchWithAuth(`/get-hospitals?page=${page}&size=${pageSize}`)
+        const filter = document.getElementById('hospitalSearchFilter').value.trim(); // Get the filter input value
+        // Construct the URL with query parameters
+        let url = `/get-hospitals?page=${page}&size=${pageSize}`;
+        if (filter) {
+            url += `&filter=${encodeURIComponent(filter)}`; // Add the filter parameter if it's not empty
+        }
+        fetchWithAuth(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -744,7 +750,13 @@
     let currentAgentPage = 0;
     const agentPageSize = 5; // Number of items per page
     function fetchAgentData(page =0) {
-        fetchWithAuth(`/list-agent?page=${page}&size=${agentPageSize}`) // Replace with your API endpoint
+        const filter = document.getElementById('agentSearchFilter').value.trim(); // Get the filter input value
+        // Construct the URL with query parameters
+        let url = `/list-agent?page=${page}&size=${agentPageSize}`;
+        if (filter) {
+            url += `&filter=${encodeURIComponent(filter)}`; // Add the filter parameter if it's not empty
+        }
+        fetchWithAuth(url) // Replace with your API endpoint
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

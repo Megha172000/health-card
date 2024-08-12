@@ -56,8 +56,9 @@ public class AgentController {
 
     @GetMapping("/list-agent")
     public Page<AgentEntity> listOfAgent(@RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "5") int size){
-        return agentService.listAgents(page, size);
+                                         @RequestParam(defaultValue = "5") int size,
+                                         @RequestParam(required = false) String filter){
+        return agentService.listAgents(page, size, filter);
     }
 
     @DeleteMapping("/remove-agent")
