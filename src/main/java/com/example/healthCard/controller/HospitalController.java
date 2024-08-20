@@ -38,8 +38,9 @@ public class HospitalController {
     @GetMapping("/get-hospitals")
     public Page<HospitalEntity> getHospitals(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        return hospitalService.getHospitals(page, size);
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) String filter) {
+        return hospitalService.getHospitals(page, size, filter);
     }
 
     @DeleteMapping("/remove-hospital")

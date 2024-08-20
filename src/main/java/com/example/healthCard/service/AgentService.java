@@ -11,9 +11,9 @@ import com.example.healthCard.repo.AgentRepo;
 import com.example.healthCard.repo.ChiefRepo;
 import com.example.healthCard.repo.MemberRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -48,8 +48,12 @@ public class AgentService {
         emailService.sendTempEmail(agentInfoDto.getName(),agentInfoDto.getEmail(),"Activation email");
     }
 
-    public List<AgentEntity> ListOfAgent(){
-        return agentRepo.findAll();
+    public Page<AgentEntity> listAgents(int page, int size, String filter){
+        Pageable pageable = PageRequest.of(page, size);
+        if (filter==null){
+            return agentRepo.findAll(pageable);
+        }
+        return agentRepo.findAllByEmailAddressContainsOrNameContains(filter, filter, pageable);
     }
 
     public void deleteAgent(String id){

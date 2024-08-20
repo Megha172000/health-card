@@ -69,6 +69,31 @@
         .teal-text{
             color: teal !important;
         }
+        /* Loader styles */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .loader.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .loader .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.3em;
+        }
     </style>
 </head>
 <body class="grey lighten-3">
@@ -152,7 +177,7 @@
             <!--Card content-->
             <div class="card-body d-sm-flex justify-content-between">
                 <h4 class="mb-2 mb-sm-0 pt-1">
-                    <span id="welcomeDisplay"></span>
+                    <span id="welcomeDisplay">Welcome Admin,</span>
                 </h4>
                 <form class="d-flex justify-content-center">
                     <!-- Default input -->
@@ -239,9 +264,9 @@
                             <h5 class="mb-0">Hospital Details</h5>
                             <!-- Actions -->
                             <div class="d-flex align-items-center">
-                                <form class="d-flex align-items-center">
+                                <form class="d-flex align-items-center" onsubmit="fetchHospitalData(0); return false;">
                                     <!-- Search input -->
-                                    <input type="search" placeholder="Search..." aria-label="Search" class="form-control mr-2">
+                                    <input type="search" id="hospitalSearchFilter" placeholder="Search..." aria-label="Search" class="form-control mr-2">
                                     <button class="btn btn-secondary btn-sm teal-color-button" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
@@ -296,9 +321,9 @@
                             <h5 class="mb-0">Agent Details</h5>
                             <!-- Actions -->
                             <div class="d-flex align-items-center">
-                                <form class="d-flex align-items-center">
+                                <form class="d-flex align-items-center" onsubmit="fetchAgentData(0); return false;">
                                     <!-- Search input -->
-                                    <input type="search" placeholder="Search..." aria-label="Search" class="form-control mr-2">
+                                    <input type="search" id="agentSearchFilter" placeholder="Search..." aria-label="Search" class="form-control mr-2">
                                     <button class="btn btn-secondary btn-sm teal-color-button" type="submit">
                                         <i class="fas fa-search"></i>
                                     </button>
@@ -330,6 +355,11 @@
                                 </tbody>
                                 <!-- Table body -->
                             </table>
+                        </div>
+
+                        <div id="agentPaginationControls" class="container-fluid pagination-controls">
+                            <i id="prevPageAgent" class="fas fa-chevron-left" onclick="changeAgentPage(currentAgentPage - 1)" style="cursor: pointer;"></i>
+                            <i id="nextPageAgent" class="fas fa-chevron-right float-right" onclick="changeAgentPage(currentAgentPage + 1)" style="cursor: pointer;"></i>
                         </div>
                         <!-- Responsive Table -->
                     </div>
@@ -535,6 +565,12 @@
 
 <!-- Toast notification -->
 <div class="toast-container"></div>
+<!-- Loader -->
+<div id="loader" class="loader">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden"></span>
+    </div>
+</div>
 
 
 <!--/.Footer-->
@@ -628,26 +664,16 @@
         }
         return fetch(url, options);
     }
-    function fetchProfileData() {
-        fetchWithAuth('/profile') // Replace with your API endpoint
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                document.getElementById('welcomeDisplay').textContent = 'Welcome ' + data.name + ',';
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                document.getElementById('welcomeDisplay').textContent = 'Error fetching data: ' + error.message;
-            });
-    }
     let currentPage = 0;
     const pageSize = 5; // Number of items per page
     function fetchHospitalData(page = 0) {
-        fetchWithAuth(`/get-hospitals?page=${page}&size=${pageSize}`)
+        const filter = document.getElementById('hospitalSearchFilter').value.trim(); // Get the filter input value
+        // Construct the URL with query parameters
+        let url = `/get-hospitals?page=${page}&size=${pageSize}`;
+        if (filter) {
+            url += `&filter=${encodeURIComponent(filter)}`; // Add the filter parameter if it's not empty
+        }
+        fetchWithAuth(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -721,8 +747,16 @@
         currentPage = page;
         fetchHospitalData(page);
     }
-    function fetchAgentData() {
-        fetchWithAuth('/list-agent') // Replace with your API endpoint
+    let currentAgentPage = 0;
+    const agentPageSize = 5; // Number of items per page
+    function fetchAgentData(page =0) {
+        const filter = document.getElementById('agentSearchFilter').value.trim(); // Get the filter input value
+        // Construct the URL with query parameters
+        let url = `/list-agent?page=${page}&size=${agentPageSize}`;
+        if (filter) {
+            url += `&filter=${encodeURIComponent(filter)}`; // Add the filter parameter if it's not empty
+        }
+        fetchWithAuth(url) // Replace with your API endpoint
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -732,7 +766,7 @@
             .then(data => {
                 const tableBody = document.querySelector('#agentTable tbody');
                 tableBody.innerHTML = ''; // Clear any existing rows
-                data.forEach(agent => {
+                data.content.forEach(agent => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                              <td>${agent.name}</td>
@@ -755,12 +789,46 @@
                          </td>
                          `;
                     tableBody.appendChild(row);
+                    updateAgentPaginationControls(data);
                 });
             })
             .catch(error => {
                 console.error('Error fetching agent data:', error);
             });
     }
+
+    function updateAgentPaginationControls(data) {
+        const prevPageIcon = document.getElementById('prevPageAgent');
+        const nextPageIcon = document.getElementById('nextPageAgent');
+
+        // Enable/disable previous button
+        if (data.pageable.pageNumber > 0) {
+            prevPageIcon.classList.remove('disabled');
+            prevPageIcon.onclick = function() { changeAgentPage(data.pageable.pageNumber - 1); };
+            prevPageIcon.style.cursor = 'pointer';
+        } else {
+            prevPageIcon.classList.add('disabled');
+            prevPageIcon.onclick = null;
+            prevPageIcon.style.cursor = 'default';
+        }
+
+        // Enable/disable next button
+        if (data.pageable.pageNumber < data.totalPages - 1) {
+            nextPageIcon.classList.remove('disabled');
+            nextPageIcon.onclick = function() { changeAgentPage(data.pageable.pageNumber + 1); };
+            nextPageIcon.style.cursor = 'pointer';
+        } else {
+            nextPageIcon.classList.add('disabled');
+            nextPageIcon.onclick = null;
+            nextPageIcon.style.cursor = 'default';
+        }
+    }
+
+    function changeAgentPage(page) {
+        currentAgentPage = page;
+        fetchAgentData(page);
+    }
+
     document.getElementById('addHospitalSubmitBtn').addEventListener('click', function() {
         // Get form values
         const name = document.getElementById('name').value;
@@ -803,6 +871,7 @@
     });
 
     document.getElementById('addAgentSubmitBtn').addEventListener('click', function() {
+        document.getElementById('loader').classList.add('active');
         // Get form values
         const name = document.getElementById('agentName').value;
         const address = document.getElementById('agentAddress').value;
@@ -837,7 +906,7 @@
             })
             .then(data => {
                 console.log('Agent details added successfully:', data);
-                fetchAgentData();
+                fetchAgentData(0);
                 document.getElementById('addAgentForm').reset();
                 $('.modal').modal('hide'); // Assuming you are using jQuery for modal
                 showToast('Agent details added successfully');
@@ -845,6 +914,9 @@
             .catch(error => {
                 console.error('Failed to add agent details:', error);
                 showToast('Error occurred while adding agent details.', 'danger');
+            })
+            .finally(()=>{
+                document.getElementById('loader').classList.remove('active');
             });
     });
 
@@ -914,7 +986,7 @@
                     // Show toast notification
                     showToast(response.body);
                     // Fetch updated data
-                    fetchAgentData();
+                    fetchAgentData(0);
                 })
                 .catch(error => {
                     console.error('Error deleting hospital data:', error);
@@ -924,8 +996,7 @@
     }
 
     window.addEventListener('load', fetchHospitalData(0));
-    window.addEventListener('load', fetchProfileData);
-    window.addEventListener('load', fetchAgentData);
+    window.addEventListener('load', fetchAgentData(0));
 
     document.getElementById('scrollToTable').addEventListener('click', function (e) {
         e.preventDefault();

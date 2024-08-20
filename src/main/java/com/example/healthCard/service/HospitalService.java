@@ -34,9 +34,12 @@ public class HospitalService {
         return hospitalRepo.findAll();
     }
 
-    public Page<HospitalEntity> getHospitals(int page, int size) {
+    public Page<HospitalEntity> getHospitals(int page, int size, String filter) {
         Pageable pageable = PageRequest.of(page, size);
-        return hospitalRepo.findAll(pageable);
+        if (filter == null){
+            return hospitalRepo.findAll(pageable);
+        }
+        return hospitalRepo.findAllByNameContains(filter, pageable);
     }
 
     public void removeHospital(String id){

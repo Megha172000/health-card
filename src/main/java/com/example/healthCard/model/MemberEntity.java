@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -18,6 +20,9 @@ public class MemberEntity {
     @ManyToOne
     @JoinColumn(name = "chief_member_id",nullable = false)
     private ChiefEntity chiefEntity;
+
+    @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<HealthCardConsultant> consultations;
 
     @Column(name = "name")
     private String name;
