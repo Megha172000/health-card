@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -42,4 +44,7 @@ public class ChiefEntity {
 
     @Column(name = "phone_number")
     private long phoneNumber;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }

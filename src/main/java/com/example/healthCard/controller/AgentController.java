@@ -7,7 +7,6 @@ import com.example.healthCard.handler.ResponseHandler;
 import com.example.healthCard.healthCardException.HealthCardException;
 import com.example.healthCard.model.AgentEntity;
 import com.example.healthCard.model.ChiefEntity;
-import com.example.healthCard.model.HospitalEntity;
 import com.example.healthCard.model.MemberEntity;
 import com.example.healthCard.repo.AgentRepo;
 import com.example.healthCard.repo.ChiefRepo;
@@ -18,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +112,11 @@ public class AgentController {
         return new ResponseEntity<>(chiefInfoDto, HttpStatus.OK);
     }
 
+    @PostMapping("/get-agent-member")
+    public List<ChiefEntity> getAgentMember(@RequestParam String agentId, LocalDateTime localDateTime){
+        List<ChiefEntity>  chiefEntityList =chiefRepo.findByAgentEntity_IdAndCreatedAt(agentId,localDateTime);
+        return chiefEntityList;
+    }
 
     @GetMapping("/list-chief")
     public ResponseEntity<Object> listOfMembers(){

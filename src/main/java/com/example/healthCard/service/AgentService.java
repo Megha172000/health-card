@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,6 +80,7 @@ public class AgentService {
         chiefEntity.setAddress(chiefInfoDto.getAddress());
         chiefEntity.setPhoneNumber(chiefInfoDto.getPhoneNumber());
         chiefEntity.setAgentEntity(agent);
+        chiefEntity.setCreatedAt(LocalDateTime.now());
         chiefRepo.save(chiefEntity);
         List<FamilyMemberDto> familyMemberDtoList = chiefInfoDto.getFamilyMemberDtoList();
         for(FamilyMemberDto familyMemberDto :familyMemberDtoList){
@@ -91,7 +93,5 @@ public class AgentService {
             memberRepo.save(memberEntity);
         }
     }
-
-
 }
 
