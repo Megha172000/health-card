@@ -1,5 +1,8 @@
 package com.example.healthCard.controller;
 
+import com.example.healthCard.healthCardException.HealthCardException;
+import com.example.healthCard.service.AgentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,6 +15,9 @@ import java.util.Map;
 
 @Controller
 public class ContentDeliveryController {
+    @Autowired
+    AgentService agentService;
+
         @GetMapping("/login")
         public String loginContent(){
         return "login";
@@ -35,6 +41,34 @@ public class ContentDeliveryController {
         @GetMapping("/update-password")
         public String updatePassword(){
         return "update_password";
+    }
+
+    @GetMapping("/create-password")
+    public String createPassword(){
+            return "create_password";
+    }
+
+    @PostMapping("/create-agent-password")
+    public ResponseEntity<Map<String, String>> createAgentPassword(@RequestBody Map<String, String> inputMap){
+            Map<String, String> response = new HashMap<>();
+            String email = inputMap.get("email");
+            String code = inputMap.get("code");
+            String password = inputMap.get("password");
+            agentService.setAgentPassword(email, Integer.parseInt(code), password);
+            response.put("jwt", "token");
+            response.put("redirectUrl", "/login"); // URL to redirect to on success
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("activate-agent")
+    public String activateAgent(@RequestParam String email, @RequestParam int code){
+        try {
+            agentService.activateAgent(email, code);
+            return "redirect:/create-password?email=" + email + "&code=" + code;
+            // Navigate to create password page
+        }catch (HealthCardException exception){
+            return exception.getErrorMessage();
+        }
     }
 
 /*        @PostMapping("/login")

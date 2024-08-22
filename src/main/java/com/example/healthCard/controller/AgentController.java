@@ -14,15 +14,13 @@ import com.example.healthCard.repo.MemberRepo;
 import com.example.healthCard.service.AgentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 
@@ -56,10 +54,32 @@ public class AgentController {
     }
 
     @GetMapping("/list-agent")
-    public Page<AgentEntity> listOfAgent(@RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "5") int size,
-                                         @RequestParam(required = false) String filter){
-        return agentService.listAgents(page, size, filter);
+    public ResponseEntity<ResponseHandler> listOfAgent(@RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "5") int size,
+                                          @RequestParam(required = false) String filter){
+        Page<AgentEntity> agentEntitiesPage = agentService.listAgents(page, size, filter);
+        List<AgentEntity> agentEntities = agentEntitiesPage.getContent();
+        Pageable pageable = agentEntitiesPage.getPageable();
+        ResponseHandler responseHandler = ResponseHandler.builder()
+                .body(agentEntities.stream().map(this::convertToAgentInfoDto).toList())
+                .code(1000)
+                .pageable(pageable)
+                .totalPages(agentEntitiesPage.getTotalPages())
+                .build();
+        return ResponseHandler.getSuccessResponse(responseHandler);
+    }
+
+    private AgentInfoDto convertToAgentInfoDto(AgentEntity agentEntity){
+        return AgentInfoDto.builder()
+                .id(agentEntity.getId())
+                .phoneNumber(agentEntity.getPhoneNumber())
+                .name(agentEntity.getName())
+                .identityType(agentEntity.getIdentityType())
+                .address(agentEntity.getAddress())
+                .identityNumber(agentEntity.getIdentityNumber())
+                .email(agentEntity.getEmailAddress())
+                .address(agentEntity.getAddress())
+                .build();
     }
 
     @DeleteMapping("/remove-agent")
@@ -181,4 +201,24 @@ public class AgentController {
         agentRepo.save(agentEntity1);
         return new ResponseEntity<>("Password updated sussessfully",HttpStatus.OK);
     }
+
+    @GetMapping("/agent-stats")
+    public List<Map<String, String>> getAgentStats(@RequestParam String id){
+
+        LocalDateTime endDate = LocalDateTime.now(); // Current date and time
+        LocalDateTime startDate = endDate.minusDays(5); // Subtract days from the current date
+        List<ChiefEntity> chiefEntityList = chiefRepo.findAllByAgentEntityIdAndCreatedAtBetween(id, startDate, endDate);
+        List<Map<String, String>> outList = new ArrayList<>();
+        chiefEntityList.forEach(chiefEntity -> {
+            Map<String, String> output = new HashMap<>();
+            output.put("name", chiefEntity.getAgentEntity().getName());
+            output.put("date", chiefEntity.getCreatedAt().toString());
+            output.put("cardNumber", chiefEntity.getId());
+            output.put("contactNumber", String.valueOf(chiefEntity.getPhoneNumber()));
+            outList.add(output);
+        });
+
+        return outList;
+    }
+
 }

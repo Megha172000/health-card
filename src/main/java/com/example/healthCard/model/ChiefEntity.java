@@ -27,7 +27,7 @@ public class ChiefEntity {
 
     // Use a different column name for the foreign key reference
     @ManyToOne
-    @JoinColumn(name = "hospital_id", nullable = false)
+    @JoinColumn(name = "agent_id", nullable = false)
     private AgentEntity agentEntity;
 
     @Column(name = "email_Address")

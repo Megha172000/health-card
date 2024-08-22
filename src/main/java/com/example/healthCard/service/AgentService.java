@@ -45,7 +45,7 @@ public class AgentService {
         agentEntity.setActivationStatus(false);
         agentEntity.setSuspended(false);
         agentRepo.save(agentEntity);
-        emailService.sendTempEmail(agentInfoDto.getName(),agentInfoDto.getEmail(),"Activation email");
+        emailService.sendTempEmail(agentInfoDto.getName(),agentInfoDto.getEmail(),"Activation email", 1);
     }
 
     public Page<AgentEntity> listAgents(int page, int size, String filter){
@@ -97,5 +97,32 @@ public class AgentService {
             memberRepo.save(memberEntity);
         }
     }
+
+    public void setAgentPassword(String email, int code, String password){
+        Optional<AgentEntity> optionalAgentEntity = agentRepo.findByEmailAddress(email);
+        if (optionalAgentEntity.isEmpty()){
+            throw new HealthCardException("Invalid email address.", 500);
+        }
+        AgentEntity agentEntity = optionalAgentEntity.get();
+        if (agentEntity.getCode() != code){
+            throw new HealthCardException("Invalid code.", 500);
+        }
+        agentEntity.setPassword(password);
+        agentEntity.setActivationStatus(true);
+        agentRepo.save(agentEntity);
+
+    }
+
+    public void activateAgent(String email, int code){
+        Optional<AgentEntity> optionalAgentEntity = agentRepo.findByEmailAddress(email);
+        if (optionalAgentEntity.isEmpty()){
+            throw new HealthCardException("Invalid email address.", 400);
+        }
+        AgentEntity agentEntity = optionalAgentEntity.get();
+        if (agentEntity.getCode() != code){
+            throw new HealthCardException("Invalid code.", 400);
+        }
+    }
+
 }
 

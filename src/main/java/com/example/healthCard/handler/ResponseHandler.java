@@ -2,6 +2,7 @@ package com.example.healthCard.handler;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -10,12 +11,18 @@ import org.springframework.http.ResponseEntity;
 public class ResponseHandler {
     Object body;
     int code;
+    Pageable pageable;
+    int totalPages;
 
     public static ResponseEntity<ResponseHandler> getSuccessResponse(Object body){
         ResponseHandler responseHandler = ResponseHandler.builder()
                 .code(1000)
                 .body(body)
                 .build();
+        return new ResponseEntity<>(responseHandler, HttpStatus.OK);
+    }
+
+    public static ResponseEntity<ResponseHandler> getSuccessResponse(ResponseHandler responseHandler){
         return new ResponseEntity<>(responseHandler, HttpStatus.OK);
     }
 

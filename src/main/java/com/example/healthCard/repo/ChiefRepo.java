@@ -17,4 +17,6 @@ public interface ChiefRepo extends JpaRepository<ChiefEntity,String>{
 
     List<ChiefEntity> findByAgentEntity_IdAndCreatedAt(String agentId ,LocalDateTime createdAt);
 
+    List<ChiefEntity> findAllByAgentEntityIdAndCreatedAtBetween(String agentId, LocalDateTime startDate, LocalDateTime endDate);
+
 }

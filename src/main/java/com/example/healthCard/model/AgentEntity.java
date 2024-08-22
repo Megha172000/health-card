@@ -17,7 +17,7 @@ public class AgentEntity {
     @Column(name = "id")
     private String id;
 
-    @OneToMany(mappedBy = "agentEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "agentEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ChiefEntity> chiefEntityList;
 
     @Column(name = "email_address")
@@ -46,4 +46,7 @@ public class AgentEntity {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "code")
+    private Integer code;
 }

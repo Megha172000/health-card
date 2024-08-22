@@ -508,6 +508,51 @@
             <!--Grid column-->
         </div>
         <!--Grid row-->
+
+        <!--Modal Form Login with Avatar Demo-->
+        <div class="modal fade" id="agentStatsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog cascading-modal modal-avatar modal-lg" role="document">
+                <!--Content-->
+                <div class="modal-content">
+
+                    <!--Header-->
+                    <div class="modal-header">
+                        <img src="https://mdbootstrap.com/img/Photos/Avatars/img%20%281%29.jpg" class="rounded-circle img-responsive"
+                             alt="Avatar photo">
+                    </div>
+                    <!--Body-->
+                    <div class="modal-body text-center mb-1">
+
+                        <h5 class="mt-1 mb-2">Maria Doe</h5>
+
+                        <div class="table-responsive">
+                            <table class="table table-hover wow animate__animated animate__fadeIn" id="agentStatsTable">
+                                <!-- Table head -->
+                                <thead class="blue-grey lighten-4">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Card Number</th>
+                                    <th>Contact Number</th>
+                                </tr>
+                                </thead>
+                                <!-- Table head -->
+                                <!-- Table body -->
+                                <tbody>
+                                <!-- Dynamic rows will be appended here -->
+                                </tbody>
+                                <!-- Table body -->
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+
+
     </div>
 </main>
 <!--Main layout-->
@@ -766,7 +811,7 @@
             .then(data => {
                 const tableBody = document.querySelector('#agentTable tbody');
                 tableBody.innerHTML = ''; // Clear any existing rows
-                data.content.forEach(agent => {
+                data.body.forEach(agent => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                              <td>${agent.name}</td>
@@ -783,6 +828,7 @@
                                  </button>
                                  <div class="dropdown-menu">
                                      <a class="dropdown-item" href="#" onclick="editRow(${agent.id})">Edit</a>
+                                     <a class="dropdown-item" href="#" onclick="fetchAgentStats('${agent.id}'); return false;">Stats</a>
                                      <a class="dropdown-item" href="#" onclick="deleteAgent('${agent.id}'); return false;">Delete</a>
                                  </div>
                              </div>
@@ -919,6 +965,45 @@
                 document.getElementById('loader').classList.remove('active');
             });
     });
+
+    function fetchAgentStats(agentId) {
+        // Call your API endpoint to fetch stats for the selected agent
+        fetchWithAuth(`/agent-stats?id=${agentId}`, { // Replace with your API endpoint
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })  // Replace with your actual API endpoint
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Populate the modal with the agent's stats
+                const agentStatsTableBody = document.querySelector('#agentStatsTable tbody');
+                agentStatsTableBody.innerHTML = ''; // Clear any existing rows
+
+                // Loop through the data and create rows for the table
+                data.forEach(stat => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                    <td>${stat.name}</td>
+                    <td>${stat.date}</td>
+                    <td>${stat.cardNumber}</td>
+                    <td>${stat.contactNumber}</td>
+                `;
+                    agentStatsTableBody.appendChild(row);
+                });
+
+                // Open the modal
+                $('#agentStatsModal').modal('show');
+            })
+            .catch(error => {
+                console.error('Error fetching agent stats:', error);
+            });
+    }
 
     // Function to show toast notification
     function showToast(message, type = 'success') {

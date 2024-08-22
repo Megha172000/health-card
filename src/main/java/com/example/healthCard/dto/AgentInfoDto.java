@@ -2,11 +2,12 @@ package com.example.healthCard.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-
+@Builder
 public class AgentInfoDto {
     @JsonProperty(value = "id")
     private String id;

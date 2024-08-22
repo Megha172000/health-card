@@ -31,7 +31,7 @@ public class EmailService {
         System.out.println("Message sent successfully");
     }
 
-    public void sendTempEmail(String name , String toEmail, String subject){
+    public void sendTempEmail(String name , String toEmail, String subject, int code){
         try{
             MimeMessage mimeMessage = emailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true,"UTF-8");
@@ -40,6 +40,7 @@ public class EmailService {
             mimeMessageHelper.setFrom("meghapatidar172000@gmail.com");
             Context context = new Context();
             context.setVariable("name",name);
+            context.setVariable("url", "http://localhost:8080/activate-agent?email="+toEmail+"&code="+code);
             String htmlContent = templateEngine.process("email",context);
             mimeMessageHelper.setText(htmlContent,true);
             emailSender.send(mimeMessage);
