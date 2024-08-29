@@ -1,9 +1,7 @@
 package com.example.healthCard.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -11,6 +9,9 @@ import java.util.Date;
 @Setter
 @Entity
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+
 @Table(name = "health_card_consultant")
 public class HealthCardConsultant {
     @Id

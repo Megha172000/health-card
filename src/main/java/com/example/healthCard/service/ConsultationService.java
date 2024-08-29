@@ -54,11 +54,20 @@ public class ConsultationService {
             }else {
                 chiefEntity = optionalChiefEntity.get();
             }
+            String healthCardId = "";
+
+            if(chiefEntity == null){
+                healthCardId  = memberEntity.getChiefEntity().getId();
+
+            }else {
+                healthCardId = chiefEntity.getId();
+            }
+
             HealthCardConsultant healthCardConsultant = HealthCardConsultant.builder()
                     .hospitalEntity(hospitalEntity)
                     .chiefEntity(chiefEntity)
                     .memberEntity(memberEntity)
-                    .healthCardId(chiefEntity.getId())
+                    .healthCardId(healthCardId)
                     .visitedTimeStamp(System.currentTimeMillis())
                     .build();
 

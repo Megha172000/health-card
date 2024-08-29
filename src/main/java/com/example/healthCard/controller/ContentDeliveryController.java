@@ -22,6 +22,10 @@ public class ContentDeliveryController {
         public String loginContent(){
         return "login";
     }
+    @GetMapping("/test")
+    public String testContent(){
+        return "test1";
+    }
 
         @GetMapping("/home")
         public String home(){

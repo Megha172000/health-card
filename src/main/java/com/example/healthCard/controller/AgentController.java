@@ -1,5 +1,6 @@
 package com.example.healthCard.controller;
 
+import com.example.healthCard.dto.AdminDto;
 import com.example.healthCard.dto.AgentInfoDto;
 import com.example.healthCard.dto.AuthInfoDto;
 import com.example.healthCard.dto.ChiefInfoDto;
@@ -8,6 +9,7 @@ import com.example.healthCard.healthCardException.HealthCardException;
 import com.example.healthCard.model.AgentEntity;
 import com.example.healthCard.model.ChiefEntity;
 import com.example.healthCard.model.MemberEntity;
+import com.example.healthCard.repo.AdminRepo;
 import com.example.healthCard.repo.AgentRepo;
 import com.example.healthCard.repo.ChiefRepo;
 import com.example.healthCard.repo.MemberRepo;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.DelegatingServerHttpResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -41,6 +44,18 @@ public class AgentController {
     @Autowired
     EmailController emailController;
 
+    @Autowired
+    AdminRepo adminRepo;
+
+    @PostMapping("/admin-login")
+    public ResponseEntity<ResponseHandler> agentLogin(@RequestBody AdminDto adminDto){
+        if(adminRepo.existsByUserNameAndPassword(adminDto.getUserName(),adminDto.getPassword())){
+            return ResponseHandler.getSuccessResponse("login");
+        }
+        else{
+            return ResponseHandler.getErrorResponse(HttpStatus.NOT_FOUND,"Please enter valid email and password");
+        }
+    }
 
     @PostMapping("/add-agent")
     public ResponseEntity<Object> addAgent(@RequestBody AgentInfoDto agentInfoDto) {

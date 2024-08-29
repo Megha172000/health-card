@@ -40,5 +40,9 @@ public class HealthCardConsultantController {
         }
     }
 
-
+    @GetMapping("/Consultant-list-By-id")
+    public ResponseEntity<ResponseHandler> consultantListById(@RequestParam String id){
+        List<HealthCardConsultant> healthCardConsultantList = healthCardConsultantRepo.findByHealthCardId(id);
+        return ResponseHandler.getSuccessResponse(healthCardConsultantList);
+    }
 }
