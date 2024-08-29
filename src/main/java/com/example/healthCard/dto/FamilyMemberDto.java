@@ -8,16 +8,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class FamilyMemberDto {
 
-    @JsonProperty(value = "name")
-    private String name;
+  @JsonProperty(value = "name")
+  private String name;
 
-    @JsonProperty(value = "identityType")
-    private String identityType;
-    @JsonProperty(value = "identityNumber")
-    private String identityNumber;
-    @JsonProperty(value = "phoneNumber")
-    private long phoneNumber;
+  @JsonProperty(value = "identityType")
+  private String identityType;
+
+  @JsonProperty(value = "identityNumber")
+  private String identityNumber;
+
+  @JsonProperty(value = "phoneNumber")
+  private long phoneNumber;
 }

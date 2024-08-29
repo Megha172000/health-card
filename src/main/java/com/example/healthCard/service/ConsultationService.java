@@ -10,74 +10,70 @@ import com.example.healthCard.repo.ChiefRepo;
 import com.example.healthCard.repo.HealthCardConsultantRepo;
 import com.example.healthCard.repo.HospitalRepo;
 import com.example.healthCard.repo.MemberRepo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ConsultationService {
 
-    @Autowired
-    HealthCardConsultantRepo healthCardConsultantRepo;
+  @Autowired HealthCardConsultantRepo healthCardConsultantRepo;
 
-    @Autowired
-    HospitalRepo hospitalRepo;
+  @Autowired HospitalRepo hospitalRepo;
 
-    @Autowired
-    ChiefRepo chiefRepo;
+  @Autowired ChiefRepo chiefRepo;
 
-    @Autowired
-    MemberRepo memberRepo;
+  @Autowired MemberRepo memberRepo;
 
-    public void addConsultation(ConsultationDto consultationDto){
-        try {
+  public void addConsultation(ConsultationDto consultationDto) {
+    try {
 
-            Optional<HospitalEntity> optionalHospitalEntity = hospitalRepo.findById(consultationDto.getHospitalId());
-            if (optionalHospitalEntity.isPresent()){
-                throw new HealthCardException("You must enter a valid hospital id.", 400);
-            }
-            HospitalEntity hospitalEntity = optionalHospitalEntity.get();
+      Optional<HospitalEntity> optionalHospitalEntity =
+          hospitalRepo.findById(consultationDto.getHospitalId());
+      if (optionalHospitalEntity.isPresent()) {
+        throw new HealthCardException("You must enter a valid hospital id.", 400);
+      }
+      HospitalEntity hospitalEntity = optionalHospitalEntity.get();
 
-            Optional<ChiefEntity> optionalChiefEntity = chiefRepo.findById(consultationDto.getCustomerId());
-            ChiefEntity chiefEntity = null;
-            MemberEntity memberEntity = null;
-            if (optionalChiefEntity.isEmpty()){
-                Optional<MemberEntity> optionalMemberEntity = memberRepo.findById(consultationDto.getCustomerId());
-                if (optionalMemberEntity.isEmpty()){
-                    throw new HealthCardException("You must enter a valid customer id.", 400);
-                }
-                else {
-                    memberEntity = optionalMemberEntity.get();
-                }
-            }else {
-                chiefEntity = optionalChiefEntity.get();
-            }
-            String healthCardId = "";
-
-            if(chiefEntity == null){
-                healthCardId  = memberEntity.getChiefEntity().getId();
-
-            }else {
-                healthCardId = chiefEntity.getId();
-            }
-
-            HealthCardConsultant healthCardConsultant = HealthCardConsultant.builder()
-                    .hospitalEntity(hospitalEntity)
-                    .chiefEntity(chiefEntity)
-                    .memberEntity(memberEntity)
-                    .healthCardId(healthCardId)
-                    .visitedTimeStamp(System.currentTimeMillis())
-                    .build();
-
-            healthCardConsultantRepo.save(healthCardConsultant);
-
-        }catch (HealthCardException exception){
-            throw exception;
+      Optional<ChiefEntity> optionalChiefEntity =
+          chiefRepo.findById(consultationDto.getCustomerId());
+      ChiefEntity chiefEntity = null;
+      MemberEntity memberEntity = null;
+      if (optionalChiefEntity.isEmpty()) {
+        Optional<MemberEntity> optionalMemberEntity =
+            memberRepo.findById(consultationDto.getCustomerId());
+        if (optionalMemberEntity.isEmpty()) {
+          throw new HealthCardException("You must enter a valid customer id.", 400);
+        } else {
+          memberEntity = optionalMemberEntity.get();
         }
-        catch (Exception exception){
-            throw new HealthCardException(exception.getLocalizedMessage(), 500);
-        }
+      } else {
+        chiefEntity = optionalChiefEntity.get();
+      }
+      String healthCardId = "";
+
+      if (chiefEntity == null) {
+        healthCardId = memberEntity.getChiefEntity().getId();
+
+      } else {
+        healthCardId = chiefEntity.getId();
+      }
+
+      HealthCardConsultant healthCardConsultant =
+          HealthCardConsultant.builder()
+              .hospitalEntity(hospitalEntity)
+              .chiefEntity(chiefEntity)
+              .memberEntity(memberEntity)
+              .healthCardId(healthCardId)
+              .visitedTimeStamp(System.currentTimeMillis())
+              .build();
+
+      healthCardConsultantRepo.save(healthCardConsultant);
+
+    } catch (HealthCardException exception) {
+      throw exception;
+    } catch (Exception exception) {
+      throw new HealthCardException(exception.getLocalizedMessage(), 500);
     }
+  }
 }

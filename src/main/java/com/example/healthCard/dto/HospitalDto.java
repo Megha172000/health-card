@@ -8,15 +8,15 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HospitalDto {
 
-    @JsonProperty(value = "name")
-    private String Name;
+  @JsonProperty(value = "name")
+  private String Name;
 
-    @JsonProperty(value = "phoneNumber")
-    private long PhoneNumber;
+  @JsonProperty(value = "phoneNumber")
+  private long PhoneNumber;
 
-    @JsonProperty(value = "address")
-    private String Address;
+  @JsonProperty(value = "address")
+  private String Address;
 
-    @JsonProperty(value = "type")
-    private String Type;
+  @JsonProperty(value = "type")
+  private String Type;
 }

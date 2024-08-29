@@ -9,24 +9,24 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
 public class AgentInfoDto {
-    @JsonProperty(value = "id")
-    private String id;
+  @JsonProperty(value = "id")
+  private String id;
 
-    @JsonProperty(value = "name")
-    private String name;
+  @JsonProperty(value = "name")
+  private String name;
 
-    @JsonProperty(value = "email")
-    private String email;
+  @JsonProperty(value = "email")
+  private String email;
 
-    @JsonProperty(value = "identityType")
-    private String identityType;
+  @JsonProperty(value = "identityType")
+  private String identityType;
 
-    @JsonProperty(value = "identityNumber")
-    private String identityNumber;
+  @JsonProperty(value = "identityNumber")
+  private String identityNumber;
 
-    @JsonProperty(value = "address")
-    private String address;
+  @JsonProperty(value = "address")
+  private String address;
 
-    @JsonProperty(value = "phoneNumber")
-    private long phoneNumber;
+  @JsonProperty(value = "phoneNumber")
+  private long phoneNumber;
 }

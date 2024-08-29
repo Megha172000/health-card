@@ -11,16 +11,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "agent_login")
-
 public class AdminEntity {
-    @Id
-    @Column(name = "id")
-    private String id;
+  @Id
+  @Column(name = "id")
+  private String id;
 
-    @Column(name = "userName")
-    private String userName;
+  @Column(name = "userName")
+  private String userName;
 
-    @Column(name = "password")
-    private String password;
-
+  @Column(name = "password")
+  private String password;
 }

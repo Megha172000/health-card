@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ConsultationDto {
 
-    private String hospitalId;
-    private String customerId;
-    private String healthCardId;
+  private String hospitalId;
+  private String customerId;
+  private String healthCardId;
 }

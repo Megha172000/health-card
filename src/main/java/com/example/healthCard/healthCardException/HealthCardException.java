@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-
 public class HealthCardException extends RuntimeException {
-    private String errorMessage;
-    private int errorCode;
+  private String errorMessage;
+  private int errorCode;
 }
