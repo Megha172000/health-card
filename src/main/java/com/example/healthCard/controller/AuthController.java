@@ -32,6 +32,7 @@ public class AuthController {
       }
       response.put("jwt", "token");
       response.put("redirectUrl", "/dashboard"); // URL to redirect to on success
+
       return ResponseHandler.getSuccessResponse(response);
     } catch (HealthCardException exception) {
       response.put("error", "The email address or password you entered is incorrect.");
