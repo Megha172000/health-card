@@ -23,7 +23,7 @@ public class ContentDeliveryController {
 
   @GetMapping("/test")
   public String testContent() {
-    return "test1";
+    return "agent_dashboard";
   }
 
   @GetMapping("/home")

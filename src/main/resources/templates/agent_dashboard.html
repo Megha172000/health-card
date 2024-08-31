@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Agent dashboard</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="/css/mdb.min.css" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="/css/style.min.css" rel="stylesheet">
+    <style>
+        .text-teal {
+            color: #008080; /* Teal color */
+        }
+        .map-container iframe{
+            left:0;
+            top:0;
+            height:100%;
+            width:100%;
+            position:absolute;
+        }
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+        .pagination-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .pagination-controls i {
+            font-size: 1.5em;
+            color: #6c757d; /* or any color you prefer */
+        }
+
+        .pagination-controls i:hover {
+            color: #264488; /* or any hover color you prefer */
+        }
+        .pagination-controls .disabled {
+            color: #ccc; /* Or any other color indicating disabled state */
+            pointer-events: none; /* Prevent any interaction with the icon */
+            cursor: default; /* Change cursor to indicate non-clickable state */
+        }
+        .btn.teal-color-button,
+        .btn.teal-color-button:hover,
+        .btn.teal-color-button:focus,
+        .btn.teal-color-button:active,
+        .btn.teal-color-button:active:focus {
+            background-color: teal !important;
+            border-color: teal !important;
+            color: #fff !important; /* Ensures text remains visible */
+        }
+        .primary-color-dark,
+        .list-group-item.active{
+            background-color: teal !important;
+        }
+        .teal-text{
+            color: teal !important;
+        }
+        /* Loader styles */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .loader.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .loader .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.3em;
+        }
+    </style>
+</head>
+<body class="grey lighten-3">
+<!--Main Navigation-->
+<header>
+    <!-- Navbar -->
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand waves-effect" href="#" target="_blank">
+                <strong class="teal-text">Home</strong>
+            </a>
+            <!-- Collapse -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Links -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Left -->
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link waves-effect text-teal" id="navBarProfileScroll" href="#">Members
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
+                <!-- Right -->
+                <ul class="navbar-nav nav-flex-icons">
+                    <li class="nav-item">
+                        <a href="https://www.facebook.com/mdbootstrap" class="nav-link waves-effect" target="_blank">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://twitter.com/MDBootstrap" class="nav-link waves-effect" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://github.com/mdbootstrap/bootstrap-material-design" class="nav-link border border-light rounded waves-effect"
+                           target="_blank">
+                            <i class="fab fa-github mr-2"></i>MDB GitHub
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar -->
+    <!-- Sidebar -->
+    <div class="sidebar-fixed position-fixed">
+        <a class="logo-wrapper waves-effect">
+            <img src="/images/logo5.png" class="img-fluid" alt="">
+        </a>
+        <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item active waves-effect">
+                <i class="fas fa-chart-pie mr-3"></i>Home
+            </a>
+            <a href="#" class="list-group-item list-group-item-action waves-effect">
+                <i class="fas fa-map mr-3"></i>My Profile</a>
+            <a href="#agentTable" class="list-group-item list-group-item-action waves-effect" id="scrollToAgentTable">
+                <i class="fas fa-table mr-3"></i>Members</a>
+        </div>
+    </div>
+    <!-- Sidebar -->
+</header>
+<!--Main Navigation-->
+<!--Main layout-->
+<main class="pt-5 mx-lg-5">
+    <div class="container-fluid mt-5">
+        <!-- Heading -->
+        <div class="card mb-4 wow fadeIn">
+            <!--Card content-->
+            <div class="card-body d-sm-flex justify-content-between">
+                <h4 class="mb-2 mb-sm-0 pt-1">
+                    <span id="welcomeDisplay">Welcome, Agent,</span>
+                </h4>
+                <form class="d-flex justify-content-center">
+                    <!-- Default input -->
+                    <input type="search" placeholder="Type your query" aria-label="Search" class="form-control">
+                    <button class="btn btn-primary btn-sm my-0 p teal-color-button" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        <!-- Heading -->
+        <!--Grid row-->
+
+        <div class="card mb-4 wow fadeIn">
+            <!--Card content-->
+            <div class="card-body d-sm-flex justify-content-between">
+                <form>
+                    <!-- Chief Member Details -->
+                    <div class="form-group">
+                        <label for="chiefName">Chief Member Name</label>
+                        <input type="text" class="form-control" id="chiefName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chiefAddress">Address</label>
+                        <input type="text" class="form-control" id="chiefAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chiefMobile">Mobile Number</label>
+                        <input type="text" class="form-control" id="chiefMobile" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chiefIdentity">Identity Number</label>
+                        <input type="text" class="form-control" id="chiefIdentity" required>
+                    </div>
+
+                    <!-- Add Member Accordion -->
+                    <div id="memberAccordion">
+                        <!-- Add Member Button -->
+                        <button type="button" class="btn btn-primary mb-3" onclick="addMemberForm()">Add Another Member</button>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+            </div>
+        </div>
+
+            <div class="card mb-4 wow fadeIn">
+                <!--Card content-->
+                <div class="card-body d-sm-flex justify-content-between">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="card mb-4">
+                                <div class="card-body text-center">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid">
+                                    <h5 class="my-3 text-teal">John Smith</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0 text-teal">Full Name</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0">Johnatan Smith</p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0 text-teal">Email</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0">example@example.com</p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0 text-teal">Phone</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0">(097) 234-5678</p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0 text-teal">Mobile</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0">(098) 765-4321</p>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0 text-teal">Address</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+</main>
+<!--Main layout-->
+<!--Footer-->
+<footer class="page-footer text-center font-small primary-color-dark darken-2 mt-4 wow fadeIn">
+    <!--Call to action-->
+    <div class="pt-4">
+        <a class="btn btn-outline-white" href="https://mdbootstrap.com/docs/jquery/getting-started/download/" target="_blank"
+           role="button">Download
+            MDB
+            <i class="fas fa-download ml-2"></i>
+        </a>
+        <a class="btn btn-outline-white" href="https://mdbootstrap.com/education/bootstrap/" target="_blank" role="button">Start
+            free tutorial
+            <i class="fas fa-graduation-cap ml-2"></i>
+        </a>
+    </div>
+    <!--/.Call to action-->
+    <hr class="my-4">
+    <!-- Social icons -->
+    <div class="pb-4">
+        <a href="https://www.facebook.com/mdbootstrap" target="_blank">
+            <i class="fab fa-facebook-f mr-3"></i>
+        </a>
+        <a href="https://twitter.com/MDBootstrap" target="_blank">
+            <i class="fab fa-twitter mr-3"></i>
+        </a>
+        <a href="https://www.youtube.com/watch?v=7MUISDJ5ZZ4" target="_blank">
+            <i class="fab fa-youtube mr-3"></i>
+        </a>
+        <a href="https://plus.google.com/u/0/b/107863090883699620484" target="_blank">
+            <i class="fab fa-google-plus mr-3"></i>
+        </a>
+        <a href="https://dribbble.com/mdbootstrap" target="_blank">
+            <i class="fab fa-dribbble mr-3"></i>
+        </a>
+        <a href="https://pinterest.com/mdbootstrap" target="_blank">
+            <i class="fab fa-pinterest mr-3"></i>
+        </a>
+        <a href="https://github.com/mdbootstrap/bootstrap-material-design" target="_blank">
+            <i class="fab fa-github mr-3"></i>
+        </a>
+        <a href="http://codepen.io/mdbootstrap/" target="_blank">
+            <i class="fab fa-codepen mr-3"></i>
+        </a>
+    </div>
+    <!-- Social icons -->
+    <!--Copyright-->
+    <div class="footer-copyright py-3">
+        © 2019 Copyright:
+        <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank"> MDBootstrap.com </a>
+    </div>
+    <!--/.Copyright-->
+</footer>
+
+<!-- Toast notification -->
+<div class="toast-container"></div>
+<!-- Loader -->
+<div id="loader" class="loader">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden"></span>
+    </div>
+</div>
+
+
+<!--/.Footer-->
+<!-- SCRIPTS -->
+<!-- JQuery -->
+<script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="/js/popper.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="/js/mdb.min.js"></script>
+<!-- Initializations -->
+<script type="text/javascript">
+    // Animations initialization
+    new WOW().init();
+
+</script>
+<script>
+    let memberCount = 0;
+
+    function addMemberForm() {
+        if (memberCount < 4) {
+            memberCount++;
+            const accordionItem = document.createElement('div');
+            accordionItem.classList.add('accordion-item');
+            accordionItem.setAttribute('id', `memberForm${memberCount}`);
+            accordionItem.innerHTML = `
+              <h2 class="accordion-header" id="heading${memberCount}">
+                <button class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#collapse${memberCount}" aria-expanded="true" aria-controls="collapse${memberCount}">
+                  Member ${memberCount} Details
+                </button>
+              </h2>
+              <div id="collapse${memberCount}" class="accordion-collapse collapse show" aria-labelledby="heading${memberCount}">
+                <div class="accordion-body">
+                  <div class="form-group">
+                    <label for="memberName${memberCount}">Member ${memberCount} Name</label>
+                    <input type="text" class="form-control" id="memberName${memberCount}" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="memberMobile${memberCount}">Mobile Number</label>
+                    <input type="text" class="form-control" id="memberMobile${memberCount}" required>
+                  </div>
+                  <button type="button" class="btn btn-danger" onclick="removeMemberForm(${memberCount})">Remove Member ${memberCount}</button>
+                </div>
+              </div>
+            `;
+            document.getElementById('memberAccordion').appendChild(accordionItem);
+        }
+    }
+
+    function removeMemberForm(memberId) {
+        const memberForm = document.getElementById(`memberForm${memberId}`);
+        if (memberForm) {
+            memberForm.remove();
+            memberCount--;
+            updateMemberFormIds();
+        }
+    }
+
+    function updateMemberFormIds() {
+        const forms = document.querySelectorAll('.accordion-item');
+        forms.forEach((form, index) => {
+            const newId = index + 1;
+            form.setAttribute('id', `memberForm${newId}`);
+            form.querySelector('.accordion-header').setAttribute('id', `heading${newId}`);
+            form.querySelector('.accordion-button').setAttribute('data-mdb-target', `#collapse${newId}`);
+            form.querySelector('.accordion-button').setAttribute('aria-controls', `collapse${newId}`);
+            form.querySelector('.accordion-button').textContent = `Member ${newId} Details`;
+            form.querySelector('.accordion-collapse').setAttribute('id', `collapse${newId}`);
+            form.querySelector('.accordion-collapse').setAttribute('aria-labelledby', `heading${newId}`);
+            form.querySelector('label[for^="memberName"]').setAttribute('for', `memberName${newId}`);
+            form.querySelector('input[id^="memberName"]').setAttribute('id', `memberName${newId}`);
+            form.querySelector('label[for^="memberMobile"]').setAttribute('for', `memberMobile${newId}`);
+            form.querySelector('input[id^="memberMobile"]').setAttribute('id', `memberMobile${newId}`);
+            form.querySelector('button').setAttribute('onclick', `removeMemberForm(${newId})`);
+            form.querySelector('button').textContent = `Remove Member ${newId}`;
+        });
+    }
+    function getJwtToken() {
+        return localStorage.getItem('jwtToken');
+    }
+    function fetchWithAuth(url, options = {}) {
+        const token = getJwtToken();
+        if (token) {
+            options.headers = {
+                ...options.headers,
+                'Authorization': `Bearer ${token}`,
+            };
+        }
+        return fetch(url, options);
+    }
+
+    document.querySelector('form').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Collect form data
+        const chiefName = document.getElementById('chiefName').value;
+        const chiefAddress = document.getElementById('chiefAddress').value;
+        const chiefMobile = document.getElementById('chiefMobile').value;
+        const chiefIdentity = document.getElementById('chiefIdentity').value;
+
+        const members = [];
+        for (let i = 1; i <= memberCount; i++) {
+            const memberName = document.getElementById(`memberName${i}`).value;
+            const memberMobile = document.getElementById(`memberMobile${i}`).value;
+            if (memberName && memberMobile) {
+                members.push({ name: memberName, mobile: memberMobile });
+            }
+        }
+
+        const payload = {
+            chiefMember: {
+                name: chiefName,
+                address: chiefAddress,
+                mobile: chiefMobile,
+                identity: chiefIdentity
+            },
+            members
+        };
+
+        // Show loader
+        document.getElementById('loader').classList.add('active');
+
+        try {
+            // Make the API call
+            const response = await fetchWithAuth('/your-api-endpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            // Handle the response
+            if (response.ok) {
+                showToast('Form submitted successfully!', 'success');
+            } else {
+                showToast('Failed to submit the form.', 'error');
+            }
+        } catch (error) {
+            showToast('An error occurred. Please try again later.', 'error');
+        } finally {
+            // Hide loader
+            document.getElementById('loader').classList.remove('active');
+        }
+    });
+
+    // Function to show toast notification
+    function showToast(message, type = 'success') {
+        const toastContainer = document.querySelector('.toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type} border-0 show`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+
+        toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-mdb-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toastContainer.removeChild(toast);
+        }, 5000);
+    }
+
+</script>
+</body>
+</html>

@@ -16,11 +16,16 @@ import com.example.healthCard.repo.MemberRepo;
 import com.example.healthCard.service.AgentService;
 import java.time.LocalDateTime;
 import java.util.*;
+
+import com.example.healthCard.service.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,14 +43,22 @@ public class AgentController {
 
   @Autowired AdminRepo adminRepo;
 
+  @Autowired
+  JWTService jwtService;
+
+  @Autowired
+  AuthenticationManager authManager;
+
   @PostMapping("/admin-login")
   public ResponseEntity<ResponseHandler> agentLogin(@RequestBody AdminDto adminDto) {
-    if (adminRepo.existsByUserNameAndPassword(adminDto.getUserName(), adminDto.getPassword())) {
-      return ResponseHandler.getSuccessResponse("login");
-    } else {
-      return ResponseHandler.getErrorResponse(
-          HttpStatus.NOT_FOUND, "Please enter valid email and password");
-    }
+      Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(adminDto.getUserName(), adminDto.getPassword()));
+      if (authentication.isAuthenticated()) {
+        String token =  jwtService.generateToken(adminDto.getUserName());
+        return ResponseHandler.getSuccessResponse(token);
+      } else {
+        return ResponseHandler.getErrorResponse(
+                HttpStatus.NOT_FOUND, "Please enter valid email and password");
+      }
   }
 
   @PostMapping("/add-agent")
