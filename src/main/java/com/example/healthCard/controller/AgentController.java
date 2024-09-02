@@ -14,14 +14,15 @@ import com.example.healthCard.repo.AgentRepo;
 import com.example.healthCard.repo.ChiefRepo;
 import com.example.healthCard.repo.MemberRepo;
 import com.example.healthCard.service.AgentService;
+import com.example.healthCard.service.JWTService;
+import com.example.healthCard.validate.Validator;
 import java.time.LocalDateTime;
 import java.util.*;
-
-import com.example.healthCard.service.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,32 +44,40 @@ public class AgentController {
 
   @Autowired AdminRepo adminRepo;
 
-  @Autowired
-  JWTService jwtService;
+  @Autowired JWTService jwtService;
 
-  @Autowired
-  AuthenticationManager authManager;
+  @Autowired AuthenticationManager authManager;
 
   @PostMapping("/admin-login")
   public ResponseEntity<ResponseHandler> agentLogin(@RequestBody AdminDto adminDto) {
-      Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(adminDto.getUserName(), adminDto.getPassword()));
-      if (authentication.isAuthenticated()) {
-        String token =  jwtService.generateToken(adminDto.getUserName());
-        return ResponseHandler.getSuccessResponse(token);
-      } else {
-        return ResponseHandler.getErrorResponse(
-                HttpStatus.NOT_FOUND, "Please enter valid email and password");
-      }
+    Authentication authentication =
+        authManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                adminDto.getUserName(), adminDto.getPassword()));
+    if (authentication.isAuthenticated()) {
+      String token = jwtService.generateToken(adminDto.getUserName());
+      return ResponseHandler.getSuccessResponse(token);
+    } else {
+      return ResponseHandler.getErrorResponse(
+          HttpStatus.NOT_FOUND, "Please enter valid email and password");
+    }
   }
 
   @PostMapping("/add-agent")
   public ResponseEntity<Object> addAgent(@RequestBody AgentInfoDto agentInfoDto) {
-    String emailAddress = agentInfoDto.getEmail();
-    if (agentRepo.existsByEmailAddress(emailAddress)) {
-      throw new HealthCardException("user already exist", 450);
+    try {
+      Validator.validateAgent(agentInfoDto);
+      String emailAddress = agentInfoDto.getEmail();
+      if (agentRepo.existsByEmailAddress(emailAddress)) {
+        throw new HealthCardException("user already exist", 450);
+      }
+      agentService.addAgent(agentInfoDto);
+      return new ResponseEntity<>(agentInfoDto, HttpStatus.OK);
+    } catch (HealthCardException healthCardException) {
+      return new ResponseEntity<>(
+          healthCardException.getErrorMessage(),
+          HttpStatusCode.valueOf(healthCardException.getErrorCode()));
     }
-    agentService.addAgent(agentInfoDto);
-    return new ResponseEntity<>(agentInfoDto, HttpStatus.OK);
   }
 
   @GetMapping("/list-agent")
