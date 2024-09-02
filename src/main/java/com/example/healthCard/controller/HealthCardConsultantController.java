@@ -6,6 +6,7 @@ import com.example.healthCard.healthCardException.HealthCardException;
 import com.example.healthCard.model.HealthCardConsultant;
 import com.example.healthCard.repo.HealthCardConsultantRepo;
 import com.example.healthCard.service.ConsultationService;
+import com.example.healthCard.validate.Validator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class HealthCardConsultantController {
   public ResponseEntity<ResponseHandler> addConsultation(
       @RequestBody ConsultationDto consultationDto) {
     try {
+      Validator.validateConsultation(consultationDto);
       consultationService.addConsultation(consultationDto);
       return ResponseHandler.getSuccessResponse("Consultation added successfully.");
     } catch (HealthCardException exception) {

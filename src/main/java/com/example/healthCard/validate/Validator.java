@@ -1,6 +1,7 @@
 package com.example.healthCard.validate;
 
 import com.example.healthCard.dto.AgentInfoDto;
+import com.example.healthCard.dto.ConsultationDto;
 import com.example.healthCard.dto.HospitalDto;
 import com.example.healthCard.healthCardException.HealthCardException;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,19 @@ public class Validator {
 
     if (hospitalDto.getType() == null || hospitalDto.getType().isEmpty()) {
       throw new HealthCardException("You must enter a type.", HttpStatus.BAD_REQUEST.value());
+    }
+  }
+
+  public static void validateConsultation(ConsultationDto consultationDto) {
+    if (consultationDto.getHospitalId() == null || consultationDto.getHospitalId().isEmpty()) {
+      throw new HealthCardException("You must enter a hospitalId.", HttpStatus.BAD_REQUEST.value());
+    }
+    if (consultationDto.getCustomerId() == null || consultationDto.getCustomerId().isEmpty()) {
+      throw new HealthCardException("You must enter a customerId.", HttpStatus.BAD_REQUEST.value());
+    }
+    if (consultationDto.getHealthCardId() == null || consultationDto.getHealthCardId().isEmpty()) {
+      throw new HealthCardException(
+          "You must enter a healthCardId.", HttpStatus.BAD_REQUEST.value());
     }
   }
 }
