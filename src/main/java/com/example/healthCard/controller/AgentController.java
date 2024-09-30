@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -50,33 +49,39 @@ public class AgentController {
 
   @PostMapping("/admin-login")
   public ResponseEntity<ResponseHandler> agentLogin(@RequestBody AdminDto adminDto) {
-    Authentication authentication =
-        authManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                adminDto.getUserName(), adminDto.getPassword()));
-    if (authentication.isAuthenticated()) {
-      String token = jwtService.generateToken(adminDto.getUserName());
-      return ResponseHandler.getSuccessResponse(token);
-    } else {
+
+    try {
+      Authentication authentication =
+          authManager.authenticate(
+              new UsernamePasswordAuthenticationToken(
+                  adminDto.getUserName(), adminDto.getPassword()));
+      if (authentication.isAuthenticated()) {
+        String token = jwtService.generateToken(adminDto.getUserName());
+        return ResponseHandler.getSuccessResponse(token);
+      } else {
+        return ResponseHandler.getErrorResponse(
+            HttpStatus.NOT_FOUND, "Please enter valid email and password");
+      }
+    } catch (Exception exception) {
       return ResponseHandler.getErrorResponse(
           HttpStatus.NOT_FOUND, "Please enter valid email and password");
     }
   }
 
   @PostMapping("/add-agent")
-  public ResponseEntity<Object> addAgent(@RequestBody AgentInfoDto agentInfoDto) {
+  public ResponseEntity<ResponseHandler> addAgent(@RequestBody AgentInfoDto agentInfoDto) {
     try {
       Validator.validateAgent(agentInfoDto);
       String emailAddress = agentInfoDto.getEmail();
-      if (agentRepo.existsByEmailAddress(emailAddress)) {
+      if (Boolean.TRUE.equals(agentRepo.existsByEmailAddress(emailAddress))) {
         throw new HealthCardException("user already exist", 450);
       }
       agentService.addAgent(agentInfoDto);
-      return new ResponseEntity<>(agentInfoDto, HttpStatus.OK);
+      return ResponseHandler.getSuccessResponse("Agent details added successfully.");
     } catch (HealthCardException healthCardException) {
-      return new ResponseEntity<>(
-          healthCardException.getErrorMessage(),
-          HttpStatusCode.valueOf(healthCardException.getErrorCode()));
+      return ResponseHandler.getErrorResponse(
+          HttpStatus.valueOf(healthCardException.getErrorCode()),
+          healthCardException.getErrorMessage());
     }
   }
 

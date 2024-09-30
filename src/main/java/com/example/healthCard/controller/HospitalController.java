@@ -11,7 +11,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,15 +21,15 @@ public class HospitalController {
   @Autowired HospitalService hospitalService;
 
   @PostMapping("/add-hospital")
-  public ResponseEntity<Object> hospitalEntry(@RequestBody HospitalDto hospitalDto) {
+  public ResponseEntity<ResponseHandler> hospitalEntry(@RequestBody HospitalDto hospitalDto) {
     try {
       Validator.validateHospital(hospitalDto);
       hospitalService.addHospital(hospitalDto);
-      return new ResponseEntity<>(hospitalDto, HttpStatus.OK);
+      return ResponseHandler.getSuccessResponse("Hospital details added successfully.");
     } catch (HealthCardException healthCardException) {
-      return new ResponseEntity<>(
-          healthCardException.getErrorMessage(),
-          HttpStatusCode.valueOf(healthCardException.getErrorCode()));
+      return ResponseHandler.getErrorResponse(
+          HttpStatus.valueOf(healthCardException.getErrorCode()),
+          healthCardException.getErrorMessage());
     }
   }
 

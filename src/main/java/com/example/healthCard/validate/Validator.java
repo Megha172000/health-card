@@ -28,7 +28,7 @@ public class Validator {
     }
     if (String.valueOf(agentInfoDto.getPhoneNumber()).length() != 10) {
       throw new HealthCardException(
-              "you must enter a valid phoneNumber.", HttpStatus.BAD_REQUEST.value());
+          "you must enter a valid phoneNumber.", HttpStatus.BAD_REQUEST.value());
     }
   }
 

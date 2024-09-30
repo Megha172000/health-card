@@ -902,26 +902,34 @@
             body: JSON.stringify(hospitalData)
         })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
+                // Check if response is ok (status in the range 200-299)
+                return response.json().then(data => {
+                    if (!response.ok) {
+                        // If response is not ok, throw an error with the body message
+                        throw new Error(data.body || 'Something went wrong');
+                    }
+                    return data; // Return the data for further processing
+                });
             })
             .then(data => {
+                // Handle success response
                 console.log('Hospital details added successfully:', data);
                 fetchHospitalData(0);
                 document.getElementById('addHospitalForm').reset();
                 $('.modal').modal('hide'); // Assuming you are using jQuery for modal
-                showToast('Hospital details added successfully');
+                showToast(data.body); // Use the success message from API response
             })
             .catch(error => {
+                // Handle error response
                 console.error('Failed to add hospital details:', error);
-                showToast('Hospital details added successfully', 'danger');
+                showToast(error.message, 'danger'); // Use the error message from API response
             });
     });
 
+
     document.getElementById('addAgentSubmitBtn').addEventListener('click', function() {
         document.getElementById('loader').classList.add('active');
+
         // Get form values
         const name = document.getElementById('agentName').value;
         const address = document.getElementById('agentAddress').value;
@@ -949,26 +957,40 @@
             body: JSON.stringify(agentData)
         })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
+                // Log the raw response for debugging
+                return response.text().then(text => {
+                    console.log('Raw response:', text); // Log the response text
+
+                    // Try to parse it as JSON
+                    try {
+                        const data = JSON.parse(text);
+                        if (!response.ok) {
+                            throw new Error(data.body || 'Something went wrong');
+                        }
+                        return data; // Return the parsed data
+                    } catch (err) {
+                        throw new Error('Failed to parse response as JSON: ' + err.message);
+                    }
+                });
             })
             .then(data => {
+                // Handle success response
                 console.log('Agent details added successfully:', data);
                 fetchAgentData(0);
                 document.getElementById('addAgentForm').reset();
                 $('.modal').modal('hide'); // Assuming you are using jQuery for modal
-                showToast('Agent details added successfully');
+                showToast(data.body); // Use the success message from API response
             })
             .catch(error => {
+                // Handle error response
                 console.error('Failed to add agent details:', error);
-                showToast('Error occurred while adding agent details.', 'danger');
+                showToast(error.message, 'danger'); // Use the error message from API response
             })
-            .finally(()=>{
+            .finally(() => {
                 document.getElementById('loader').classList.remove('active');
             });
     });
+
 
     function fetchAgentStats(agentId) {
         // Call your API endpoint to fetch stats for the selected agent
