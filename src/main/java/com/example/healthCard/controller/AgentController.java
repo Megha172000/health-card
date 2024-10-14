@@ -74,7 +74,7 @@ public class AgentController {
       Validator.validateAgent(agentInfoDto);
       String emailAddress = agentInfoDto.getEmail();
       if (Boolean.TRUE.equals(agentRepo.existsByEmailAddress(emailAddress))) {
-        throw new HealthCardException("user already exist", 450);
+        throw new HealthCardException("user already exist", 400);
       }
       agentService.addAgent(agentInfoDto);
       return ResponseHandler.getSuccessResponse("Agent details added successfully.");
