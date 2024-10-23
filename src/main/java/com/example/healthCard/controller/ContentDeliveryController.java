@@ -21,7 +21,7 @@ public class ContentDeliveryController {
     return "login";
   }
 
-  @GetMapping("/test")
+  @GetMapping("/agent-dashboard")
   public String testContent() {
     return "agent_dashboard";
   }

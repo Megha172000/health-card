@@ -1,9 +1,6 @@
 package com.example.healthCard.controller;
 
-import com.example.healthCard.dto.AdminDto;
-import com.example.healthCard.dto.AgentInfoDto;
-import com.example.healthCard.dto.AuthInfoDto;
-import com.example.healthCard.dto.ChiefInfoDto;
+import com.example.healthCard.dto.*;
 import com.example.healthCard.handler.ResponseHandler;
 import com.example.healthCard.healthCardException.HealthCardException;
 import com.example.healthCard.model.AgentEntity;
@@ -15,6 +12,7 @@ import com.example.healthCard.repo.ChiefRepo;
 import com.example.healthCard.repo.MemberRepo;
 import com.example.healthCard.service.AgentService;
 import com.example.healthCard.service.JWTService;
+import com.example.healthCard.service.MemberService;
 import com.example.healthCard.validate.Validator;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -26,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -47,6 +46,8 @@ public class AgentController {
 
   @Autowired AuthenticationManager authManager;
 
+  @Autowired MemberService memberService;
+
   @PostMapping("/admin-login")
   public ResponseEntity<ResponseHandler> agentLogin(@RequestBody AdminDto adminDto) {
 
@@ -56,8 +57,12 @@ public class AgentController {
               new UsernamePasswordAuthenticationToken(
                   adminDto.getUserName(), adminDto.getPassword()));
       if (authentication.isAuthenticated()) {
+        AgentEntity agentEntity = agentRepo.findByEmailAddress(adminDto.getUserName()).get();
         String token = jwtService.generateToken(adminDto.getUserName());
-        return ResponseHandler.getSuccessResponse(token);
+        Map<String, String> res = new HashMap<>();
+        res.put("token", token);
+        res.put("role", agentEntity.getRole());
+        return ResponseHandler.getSuccessResponse(res);
       } else {
         return ResponseHandler.getErrorResponse(
             HttpStatus.NOT_FOUND, "Please enter valid email and password");
@@ -178,9 +183,19 @@ public class AgentController {
   }
 
   @GetMapping("/list-chief")
-  public ResponseEntity<Object> listOfMembers() {
-    List<ChiefEntity> chiefEntityList = chiefRepo.findAll();
-    return new ResponseEntity<>(chiefEntityList, HttpStatus.OK);
+  public ResponseEntity<Object> listOfMembers(
+      @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    List<ChiefDto> chiefDtos = memberService.listMembers(page, size);
+    return new ResponseEntity<>(chiefDtos, HttpStatus.OK);
+  }
+
+  @GetMapping("/list-members-by-agent-id")
+  public ResponseEntity<Object> listOfMembersByAgentId(
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "5") int size,
+      String agentId) {
+    List<ChiefDto> chiefDtos = memberService.listMembersByAgentId(page, size, agentId);
+    return new ResponseEntity<>(chiefDtos, HttpStatus.OK);
   }
 
   @GetMapping("/list-chief-members")
@@ -233,9 +248,10 @@ public class AgentController {
       return new ResponseEntity<>("email Address is not present", HttpStatus.NOT_FOUND);
     }
     AgentEntity agentEntity1 = agentEntity.get();
-    agentEntity1.setPassword(authInfoDto.getPassword());
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    agentEntity1.setPassword(encoder.encode(authInfoDto.getPassword()));
     agentRepo.save(agentEntity1);
-    return new ResponseEntity<>("Password updated sussessfully", HttpStatus.OK);
+    return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
   }
 
   @GetMapping("/agent-stats")

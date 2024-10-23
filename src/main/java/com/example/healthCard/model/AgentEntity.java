@@ -48,4 +48,7 @@ public class AgentEntity {
 
   @Column(name = "code")
   private Integer code;
+
+  @Column(name = "role")
+  private String role;
 }

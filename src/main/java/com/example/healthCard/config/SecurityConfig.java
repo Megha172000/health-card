@@ -34,7 +34,15 @@ public class SecurityConfig {
             request ->
                 request
                     .requestMatchers(
-                        "login", "register", "admin-login", "/images/*", "/dashboard", "test")
+                        "login",
+                        "register",
+                        "admin-login",
+                        "/images/*",
+                        "/dashboard",
+                        "agent-dashboard",
+                        "/activate-agent",
+                        "/create-password",
+                        "/create-agent-password")
                     .permitAll()
                     .requestMatchers(
                         "/css/**", "/js/**", "/images/**", "/webjars/**", "/static/**", "/font/**")

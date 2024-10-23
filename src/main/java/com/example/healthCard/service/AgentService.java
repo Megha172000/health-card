@@ -1,5 +1,6 @@
 package com.example.healthCard.service;
 
+import com.example.healthCard.constants.ApplicationConstants;
 import com.example.healthCard.dto.AgentInfoDto;
 import com.example.healthCard.dto.ChiefInfoDto;
 import com.example.healthCard.dto.FamilyMemberDto;
@@ -10,6 +11,7 @@ import com.example.healthCard.model.MemberEntity;
 import com.example.healthCard.repo.AgentRepo;
 import com.example.healthCard.repo.ChiefRepo;
 import com.example.healthCard.repo.MemberRepo;
+import com.example.healthCard.util.CommonUtil;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,6 +33,7 @@ public class AgentService {
   @Autowired EmailService emailService;
 
   public void addAgent(AgentInfoDto agentInfoDto) {
+    int code = CommonUtil.generateRandomNumber();
     AgentEntity agentEntity = new AgentEntity();
     agentEntity.setName(agentInfoDto.getName());
     agentEntity.setEmailAddress(agentInfoDto.getEmail());
@@ -39,9 +43,11 @@ public class AgentService {
     agentEntity.setIdentityNumber(agentInfoDto.getIdentityNumber());
     agentEntity.setActivationStatus(false);
     agentEntity.setSuspended(false);
+    agentEntity.setCode(code);
+    agentEntity.setRole(ApplicationConstants.USER_ROLES.AGENT.name());
     agentRepo.save(agentEntity);
     emailService.sendTempEmail(
-        agentInfoDto.getName(), agentInfoDto.getEmail(), "Activation email", 1);
+        agentInfoDto.getName(), agentInfoDto.getEmail(), "Activation email", code);
   }
 
   public Page<AgentEntity> listAgents(int page, int size, String filter) {
@@ -103,7 +109,8 @@ public class AgentService {
     if (agentEntity.getCode() != code) {
       throw new HealthCardException("Invalid code.", 500);
     }
-    agentEntity.setPassword(password);
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    agentEntity.setPassword(encoder.encode(password));
     agentEntity.setActivationStatus(true);
     agentRepo.save(agentEntity);
   }

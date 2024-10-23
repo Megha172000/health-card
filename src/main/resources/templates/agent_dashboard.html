@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Agent dashboard</title>
+    <title>Agent Dashboard</title>
+    <!-- Font Awesome -->
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
     <!-- Bootstrap core CSS -->
@@ -17,19 +18,22 @@
         .text-teal {
             color: #008080; /* Teal color */
         }
-        .map-container iframe{
-            left:0;
-            top:0;
-            height:100%;
-            width:100%;
-            position:absolute;
+
+        .map-container iframe {
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
         }
+
         .toast-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
             z-index: 1050;
         }
+
         .pagination-controls {
             display: flex;
             justify-content: space-between;
@@ -39,17 +43,19 @@
 
         .pagination-controls i {
             font-size: 1.5em;
-            color: #6c757d; /* or any color you prefer */
+            color: #6c757d;
         }
 
         .pagination-controls i:hover {
-            color: #264488; /* or any hover color you prefer */
+            color: #264488;
         }
+
         .pagination-controls .disabled {
-            color: #ccc; /* Or any other color indicating disabled state */
-            pointer-events: none; /* Prevent any interaction with the icon */
-            cursor: default; /* Change cursor to indicate non-clickable state */
+            color: #ccc;
+            pointer-events: none;
+            cursor: default;
         }
+
         .btn.teal-color-button,
         .btn.teal-color-button:hover,
         .btn.teal-color-button:focus,
@@ -57,16 +63,18 @@
         .btn.teal-color-button:active:focus {
             background-color: teal !important;
             border-color: teal !important;
-            color: #fff !important; /* Ensures text remains visible */
+            color: #fff !important;
         }
+
         .primary-color-dark,
-        .list-group-item.active{
+        .list-group-item.active {
             background-color: teal !important;
         }
-        .teal-text{
+
+        .teal-text {
             color: teal !important;
         }
-        /* Loader styles */
+
         .loader {
             position: fixed;
             top: 0;
@@ -82,19 +90,22 @@
             opacity: 0;
             visibility: hidden;
         }
+
         .loader.active {
             opacity: 1;
             visibility: visible;
         }
+
         .loader .spinner-border {
             width: 3rem;
             height: 3rem;
             border-width: 0.3em;
         }
+
     </style>
 </head>
 <body class="grey lighten-3">
-<!--Main Navigation-->
+<!-- Main Navigation -->
 <header>
     <!-- Navbar -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
@@ -143,7 +154,7 @@
     <!-- Sidebar -->
     <div class="sidebar-fixed position-fixed">
         <a class="logo-wrapper waves-effect">
-            <img src="/images/logo5.png" class="img-fluid" alt="">
+            <img src="/images/logo5.png" class="img-fluid" alt="Logo">
         </a>
         <div class="list-group list-group-flush">
             <a href="#" class="list-group-item active waves-effect">
@@ -151,203 +162,122 @@
             </a>
             <a href="#" class="list-group-item list-group-item-action waves-effect">
                 <i class="fas fa-map mr-3"></i>My Profile</a>
-            <a href="#agentTable" class="list-group-item list-group-item-action waves-effect" id="scrollToAgentTable">
+            <a href="#memberTable" class="list-group-item list-group-item-action waves-effect" id="scrollToAgentTable">
                 <i class="fas fa-table mr-3"></i>Members</a>
         </div>
     </div>
     <!-- Sidebar -->
 </header>
-<!--Main Navigation-->
-<!--Main layout-->
+<!-- Main Navigation -->
+
+<!-- Main layout -->
 <main class="pt-5 mx-lg-5">
     <div class="container-fluid mt-5">
-        <!-- Heading -->
-        <div class="card mb-4 wow fadeIn">
-            <!--Card content-->
-            <div class="card-body d-sm-flex justify-content-between">
-                <h4 class="mb-2 mb-sm-0 pt-1">
-                    <span id="welcomeDisplay">Welcome, Agent,</span>
-                </h4>
-                <form class="d-flex justify-content-center">
-                    <!-- Default input -->
-                    <input type="search" placeholder="Type your query" aria-label="Search" class="form-control">
-                    <button class="btn btn-primary btn-sm my-0 p teal-color-button" type="submit">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </form>
+        <div class="row wow fadeIn">
+            <!--Grid column-->
+            <div class="col-md-12 mb-4">
+                <!--Card-->
+                <div class="card">
+                    <!--Card content-->
+                    <div class="card-body">
+                        <!-- Header and Actions -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">Member Details</h5>
+                            <!-- Actions -->
+                            <div class="d-flex align-items-center">
+                                <form class="d-flex align-items-center" onsubmit="fetchHospitalData(0); return false;">
+                                    <!-- Search input -->
+                                    <input type="search" id="memberSearchFilter" placeholder="Search..." aria-label="Search" class="form-control mr-2">
+                                    <button class="btn btn-secondary btn-sm teal-color-button" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </form>
+                                <!-- Add Hospital Button -->
+                                <button class="btn btn-secondary btn-sm ml-3 teal-color-button" style="color: #0b2e13" id="addRowButton" data-toggle="modal" data-target="#addHospitalModal">Add Member</button>
+                            </div>
+                        </div>
+                        <!-- Responsive Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover wow animate__animated animate__fadeIn" id="memberTable">
+                                <!-- Table head -->
+                                <thead class="blue-grey lighten-4">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Email Address</th>
+                                    <th>Contact Number</th>
+                                    <th>Identity Type</th>
+                                    <th>Identity Number</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <!-- Table head -->
+                                <!-- Table body -->
+                                <tbody>
+                                <!-- Dynamic rows will be appended here -->
+                                </tbody>
+                                <!-- Table body -->
+                            </table>
+                        </div>
+
+                        <div id="paginationControls" class="container-fluid pagination-controls">
+                            <i id="prevPage" class="fas fa-chevron-left" onclick="changePage(currentPage - 1)" style="cursor: pointer;"></i>
+                            <i id="nextPage" class="fas fa-chevron-right float-right" onclick="changePage(currentPage + 1)" style="cursor: pointer;"></i>
+                        </div>
+                        <!-- Responsive Table -->
+                    </div>
+                </div>
+                <!--/.Card-->
             </div>
         </div>
-        <!-- Heading -->
-        <!--Grid row-->
-
+        <!-- Form -->
         <div class="card mb-4 wow fadeIn">
-            <!--Card content-->
-            <div class="card-body d-sm-flex justify-content-between">
+            <div class="card-body">
                 <form>
-                    <!-- Chief Member Details -->
                     <div class="form-group">
                         <label for="chiefName">Chief Member Name</label>
                         <input type="text" class="form-control" id="chiefName" required>
                     </div>
                     <div class="form-group">
-                        <label for="chiefAddress">Address</label>
-                        <input type="text" class="form-control" id="chiefAddress" required>
+                        <label for="emailAddress">Email Address</label>
+                        <input type="email" class="form-control" id="emailAddress" required>
                     </div>
                     <div class="form-group">
                         <label for="chiefMobile">Mobile Number</label>
                         <input type="text" class="form-control" id="chiefMobile" required>
                     </div>
                     <div class="form-group">
+                        <label for="chiefAddress">Address</label>
+                        <input type="text" class="form-control" id="chiefAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chiefIdentityType">Identity Type</label>
+                        <input type="text" class="form-control" id="chiefIdentityType" required>
+                    </div>
+                    <div class="form-group">
                         <label for="chiefIdentity">Identity Number</label>
                         <input type="text" class="form-control" id="chiefIdentity" required>
                     </div>
-
-                    <!-- Add Member Accordion -->
                     <div id="memberAccordion">
-                        <!-- Add Member Button -->
-                        <button type="button" class="btn btn-primary mb-3" onclick="addMemberForm()">Add Another Member</button>
+                        <button type="button" class="btn btn-primary mb-3" id="addMemberBtn" onclick="addMemberForm()">Add Another Member</button>
                     </div>
-
-                    <!-- Submit Button -->
                     <button type="submit" class="btn btn-success">Submit</button>
                 </form>
             </div>
         </div>
-
-            <div class="card mb-4 wow fadeIn">
-                <!--Card content-->
-                <div class="card-body d-sm-flex justify-content-between">
-                    <div class="row">
-                        <div class="col-lg-4">
-                            <div class="card mb-4">
-                                <div class="card-body text-center">
-                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid">
-                                    <h5 class="my-3 text-teal">John Smith</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-8">
-                            <div class="card mb-4">
-                                <div class="card-body">
-                                    <div class="row mb-3">
-                                        <div class="col-sm-3">
-                                            <p class="mb-0 text-teal">Full Name</p>
-                                        </div>
-                                        <div class="col-sm-9">
-                                            <p class="text-muted mb-0">Johnatan Smith</p>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row mb-3">
-                                        <div class="col-sm-3">
-                                            <p class="mb-0 text-teal">Email</p>
-                                        </div>
-                                        <div class="col-sm-9">
-                                            <p class="text-muted mb-0">example@example.com</p>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row mb-3">
-                                        <div class="col-sm-3">
-                                            <p class="mb-0 text-teal">Phone</p>
-                                        </div>
-                                        <div class="col-sm-9">
-                                            <p class="text-muted mb-0">(097) 234-5678</p>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row mb-3">
-                                        <div class="col-sm-3">
-                                            <p class="mb-0 text-teal">Mobile</p>
-                                        </div>
-                                        <div class="col-sm-9">
-                                            <p class="text-muted mb-0">(098) 765-4321</p>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row mb-3">
-                                        <div class="col-sm-3">
-                                            <p class="mb-0 text-teal">Address</p>
-                                        </div>
-                                        <div class="col-sm-9">
-                                            <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
     </div>
 </main>
-<!--Main layout-->
-<!--Footer-->
-<footer class="page-footer text-center font-small primary-color-dark darken-2 mt-4 wow fadeIn">
-    <!--Call to action-->
-    <div class="pt-4">
-        <a class="btn btn-outline-white" href="https://mdbootstrap.com/docs/jquery/getting-started/download/" target="_blank"
-           role="button">Download
-            MDB
-            <i class="fas fa-download ml-2"></i>
-        </a>
-        <a class="btn btn-outline-white" href="https://mdbootstrap.com/education/bootstrap/" target="_blank" role="button">Start
-            free tutorial
-            <i class="fas fa-graduation-cap ml-2"></i>
-        </a>
-    </div>
-    <!--/.Call to action-->
-    <hr class="my-4">
-    <!-- Social icons -->
-    <div class="pb-4">
-        <a href="https://www.facebook.com/mdbootstrap" target="_blank">
-            <i class="fab fa-facebook-f mr-3"></i>
-        </a>
-        <a href="https://twitter.com/MDBootstrap" target="_blank">
-            <i class="fab fa-twitter mr-3"></i>
-        </a>
-        <a href="https://www.youtube.com/watch?v=7MUISDJ5ZZ4" target="_blank">
-            <i class="fab fa-youtube mr-3"></i>
-        </a>
-        <a href="https://plus.google.com/u/0/b/107863090883699620484" target="_blank">
-            <i class="fab fa-google-plus mr-3"></i>
-        </a>
-        <a href="https://dribbble.com/mdbootstrap" target="_blank">
-            <i class="fab fa-dribbble mr-3"></i>
-        </a>
-        <a href="https://pinterest.com/mdbootstrap" target="_blank">
-            <i class="fab fa-pinterest mr-3"></i>
-        </a>
-        <a href="https://github.com/mdbootstrap/bootstrap-material-design" target="_blank">
-            <i class="fab fa-github mr-3"></i>
-        </a>
-        <a href="http://codepen.io/mdbootstrap/" target="_blank">
-            <i class="fab fa-codepen mr-3"></i>
-        </a>
-    </div>
-    <!-- Social icons -->
-    <!--Copyright-->
+
+<!-- Footer -->
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
     <div class="footer-copyright py-3">
-        © 2019 Copyright:
+        © 2024 Copyright:
         <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank"> MDBootstrap.com </a>
     </div>
-    <!--/.Copyright-->
 </footer>
+<!-- Footer -->
 
-<!-- Toast notification -->
-<div class="toast-container"></div>
-<!-- Loader -->
-<div id="loader" class="loader">
-    <div class="spinner-border" role="status">
-        <span class="visually-hidden"></span>
-    </div>
-</div>
-
-
-<!--/.Footer-->
 <!-- SCRIPTS -->
-<!-- JQuery -->
 <script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
 <!-- Bootstrap tooltips -->
 <script type="text/javascript" src="/js/popper.min.js"></script>
@@ -361,67 +291,47 @@
     new WOW().init();
 
 </script>
+
 <script>
     let memberCount = 0;
+    const maxMembers = 4;
 
     function addMemberForm() {
-        if (memberCount < 4) {
+        if (memberCount < maxMembers) {
             memberCount++;
-            const accordionItem = document.createElement('div');
-            accordionItem.classList.add('accordion-item');
-            accordionItem.setAttribute('id', `memberForm${memberCount}`);
-            accordionItem.innerHTML = `
-              <h2 class="accordion-header" id="heading${memberCount}">
-                <button class="accordion-button" type="button" data-mdb-toggle="collapse" data-mdb-target="#collapse${memberCount}" aria-expanded="true" aria-controls="collapse${memberCount}">
-                  Member ${memberCount} Details
-                </button>
-              </h2>
-              <div id="collapse${memberCount}" class="accordion-collapse collapse show" aria-labelledby="heading${memberCount}">
-                <div class="accordion-body">
-                  <div class="form-group">
-                    <label for="memberName${memberCount}">Member ${memberCount} Name</label>
+            const memberForm = document.createElement('div');
+            memberForm.className = 'form-group';
+            memberForm.id = 'memberForm' + memberCount;
+            memberForm.innerHTML = `
+                <div class="form-group">
+                    <label for="memberName${memberCount}">Member Name</label>
                     <input type="text" class="form-control" id="memberName${memberCount}" required>
-                  </div>
-                  <div class="form-group">
+                </div>
+                <div class="form-group">
                     <label for="memberMobile${memberCount}">Mobile Number</label>
                     <input type="text" class="form-control" id="memberMobile${memberCount}" required>
-                  </div>
-                  <button type="button" class="btn btn-danger" onclick="removeMemberForm(${memberCount})">Remove Member ${memberCount}</button>
                 </div>
-              </div>
+                <button type="button" class="btn btn-danger mb-3" onclick="removeMemberForm(${memberCount})">Remove Member</button>
+                <hr>
             `;
-            document.getElementById('memberAccordion').appendChild(accordionItem);
+            document.getElementById('memberAccordion').insertBefore(memberForm, document.getElementById('addMemberBtn'));
+        }
+
+        if (memberCount === maxMembers) {
+            document.getElementById('addMemberBtn').disabled = true;
         }
     }
 
-    function removeMemberForm(memberId) {
-        const memberForm = document.getElementById(`memberForm${memberId}`);
-        if (memberForm) {
-            memberForm.remove();
-            memberCount--;
-            updateMemberFormIds();
+    function removeMemberForm(id) {
+        const memberForm = document.getElementById('memberForm' + id);
+        document.getElementById('memberAccordion').removeChild(memberForm);
+        memberCount--;
+
+        if (memberCount < maxMembers) {
+            document.getElementById('addMemberBtn').disabled = false;
         }
     }
 
-    function updateMemberFormIds() {
-        const forms = document.querySelectorAll('.accordion-item');
-        forms.forEach((form, index) => {
-            const newId = index + 1;
-            form.setAttribute('id', `memberForm${newId}`);
-            form.querySelector('.accordion-header').setAttribute('id', `heading${newId}`);
-            form.querySelector('.accordion-button').setAttribute('data-mdb-target', `#collapse${newId}`);
-            form.querySelector('.accordion-button').setAttribute('aria-controls', `collapse${newId}`);
-            form.querySelector('.accordion-button').textContent = `Member ${newId} Details`;
-            form.querySelector('.accordion-collapse').setAttribute('id', `collapse${newId}`);
-            form.querySelector('.accordion-collapse').setAttribute('aria-labelledby', `heading${newId}`);
-            form.querySelector('label[for^="memberName"]').setAttribute('for', `memberName${newId}`);
-            form.querySelector('input[id^="memberName"]').setAttribute('id', `memberName${newId}`);
-            form.querySelector('label[for^="memberMobile"]').setAttribute('for', `memberMobile${newId}`);
-            form.querySelector('input[id^="memberMobile"]').setAttribute('id', `memberMobile${newId}`);
-            form.querySelector('button').setAttribute('onclick', `removeMemberForm(${newId})`);
-            form.querySelector('button').textContent = `Remove Member ${newId}`;
-        });
-    }
     function getJwtToken() {
         return localStorage.getItem('jwtToken');
     }
@@ -435,87 +345,62 @@
         }
         return fetch(url, options);
     }
+    let currentPage = 0;
+    const pageSize = 5; // Number of items per page
 
-    document.querySelector('form').addEventListener('submit', async function(event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        // Collect form data
-        const chiefName = document.getElementById('chiefName').value;
-        const chiefAddress = document.getElementById('chiefAddress').value;
-        const chiefMobile = document.getElementById('chiefMobile').value;
-        const chiefIdentity = document.getElementById('chiefIdentity').value;
-
-        const members = [];
-        for (let i = 1; i <= memberCount; i++) {
-            const memberName = document.getElementById(`memberName${i}`).value;
-            const memberMobile = document.getElementById(`memberMobile${i}`).value;
-            if (memberName && memberMobile) {
-                members.push({ name: memberName, mobile: memberMobile });
-            }
+    function fetchMemberData(page = 0) {
+        const filter = document.getElementById('memberSearchFilter').value.trim(); // Get the filter input value
+        // Construct the URL with query parameters
+        let url = `/list-chief?page=${page}&size=${pageSize}`;
+        if (filter) {
+            url += `&filter=${encodeURIComponent(filter)}`; // Add the filter parameter if it's not empty
         }
+        fetchWithAuth(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tableBody = document.querySelector('#memberTable tbody');
+                tableBody.innerHTML = ''; // Clear any existing rows
 
-        const payload = {
-            chiefMember: {
-                name: chiefName,
-                address: chiefAddress,
-                mobile: chiefMobile,
-                identity: chiefIdentity
-            },
-            members
-        };
+                // Append rows to the table
+                data.forEach(member => {
+                    const row = document.createElement('tr');
+                    console.log(member.id);
+                    row.innerHTML = `
+                    <td>${member.name}</td>
+                    <td>${member.address}</td>
+                    <td>${member.emailAddress}</td>
+                    <td>${member.phoneNumber}</td>
+                    <td>${member.identityType}</td>
+                    <td>${member.identityNumber}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary dropdown-toggle btn-sm teal-color-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Actions
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#" onclick="editRow(${member.id})">Edit</a>
+                                <a class="dropdown-item" href="#" onclick="deleteRow('${member.id}'); return false;">Delete</a>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                    tableBody.appendChild(row);
+                });
 
-        // Show loader
-        document.getElementById('loader').classList.add('active');
-
-        try {
-            // Make the API call
-            const response = await fetchWithAuth('/your-api-endpoint', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
+                // Update pagination controls
+                updatePaginationControls(data);
+            })
+            .catch(error => {
+                console.error('Error fetching member data:', error);
             });
-
-            // Handle the response
-            if (response.ok) {
-                showToast('Form submitted successfully!', 'success');
-            } else {
-                showToast('Failed to submit the form.', 'error');
-            }
-        } catch (error) {
-            showToast('An error occurred. Please try again later.', 'error');
-        } finally {
-            // Hide loader
-            document.getElementById('loader').classList.remove('active');
-        }
-    });
-
-    // Function to show toast notification
-    function showToast(message, type = 'success') {
-        const toastContainer = document.querySelector('.toast-container');
-        const toast = document.createElement('div');
-        toast.className = `toast align-items-center text-white bg-${type} border-0 show`;
-        toast.setAttribute('role', 'alert');
-        toast.setAttribute('aria-live', 'assertive');
-        toast.setAttribute('aria-atomic', 'true');
-
-        toast.innerHTML = `
-                <div class="d-flex">
-                    <div class="toast-body">
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-mdb-dismiss="toast" aria-label="Close"></button>
-                </div>
-            `;
-
-        toastContainer.appendChild(toast);
-
-        setTimeout(() => {
-            toast.classList.remove('show');
-            toastContainer.removeChild(toast);
-        }, 5000);
     }
+
+    window.addEventListener('load', fetchMemberData(0));
 
 </script>
 </body>

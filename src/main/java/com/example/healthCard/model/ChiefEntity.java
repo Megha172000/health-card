@@ -17,7 +17,7 @@ public class ChiefEntity {
   @Column(name = "id")
   private String id;
 
-  @OneToMany(mappedBy = "chiefEntity", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "chiefEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<MemberEntity> memberEntityList;
 
   @OneToMany(mappedBy = "chiefEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
