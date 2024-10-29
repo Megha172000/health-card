@@ -29,4 +29,7 @@ public class AgentInfoDto {
 
   @JsonProperty(value = "phoneNumber")
   private long phoneNumber;
+
+  @JsonProperty(value = "activationStatus")
+  private boolean activationStatus;
 }

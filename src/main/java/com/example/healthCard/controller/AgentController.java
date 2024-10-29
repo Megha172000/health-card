@@ -118,6 +118,7 @@ public class AgentController {
         .identityNumber(agentEntity.getIdentityNumber())
         .email(agentEntity.getEmailAddress())
         .address(agentEntity.getAddress())
+        .activationStatus(agentEntity.isActivationStatus())
         .build();
   }
 
