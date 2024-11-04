@@ -4,7 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Material Design Bootstrap</title>
+    <title>Health-Card</title>
+    <!-- MDB icon -->
+    <link rel="icon" href="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp" type="image/x-icon">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
     <!-- Bootstrap core CSS -->
@@ -714,19 +716,24 @@
         }
         fetchWithAuth(url)
             .then(response => {
+                if (response.status === 401) {  // Check for 401 Unauthorized
+                    window.location.href = '/login';  // Redirect to login page
+                    return;  // Stop further execution
+                }
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
             })
             .then(data => {
+                if (!data) return; // If redirected to login, exit early
+
                 const tableBody = document.querySelector('#hospitalTable tbody');
                 tableBody.innerHTML = ''; // Clear any existing rows
 
                 // Append rows to the table
                 data.content.forEach(hospital => {
                     const row = document.createElement('tr');
-                    console.log(hospital.id);
                     row.innerHTML = `
                     <td>${hospital.name}</td>
                     <td>${hospital.address}</td>
@@ -755,6 +762,7 @@
                 console.error('Error fetching hospital data:', error);
             });
     }
+
     function updatePaginationControls(data) {
         const prevPageIcon = document.getElementById('prevPage');
         const nextPageIcon = document.getElementById('nextPage');
@@ -797,6 +805,10 @@
         }
         fetchWithAuth(url) // Replace with your API endpoint
             .then(response => {
+                if (response.status === 401) {  // Check for 401 Unauthorized
+                    window.location.href = '/login';  // Redirect to login page
+                    return;  // Stop further execution
+                }
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -894,6 +906,10 @@
             .then(response => {
                 // Check if response is ok (status in the range 200-299)
                 return response.json().then(data => {
+                    if (response.status === 401) {  // Check for 401 Unauthorized
+                        window.location.href = '/login';  // Redirect to login page
+                        return;  // Stop further execution
+                    }
                     if (!response.ok) {
                         // If response is not ok, throw an error with the body message
                         throw new Error(data.body || 'Something went wrong');
@@ -949,6 +965,10 @@
             .then(response => {
                 // Check if response is OK
                 return response.json().then(data => {
+                    if (response.status === 401) {  // Check for 401 Unauthorized
+                        window.location.href = '/login';  // Redirect to login page
+                        return;  // Stop further execution
+                    }
                     if (!response.ok) {
                         // If response is not OK, throw an error with the body message
                         throw new Error(data.body || 'Something went wrong');
@@ -984,6 +1004,10 @@
             }
         })  // Replace with your actual API endpoint
             .then(response => {
+                if (response.status === 401) {  // Check for 401 Unauthorized
+                    window.location.href = '/login';  // Redirect to login page
+                    return;  // Stop further execution
+                }
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -1049,6 +1073,10 @@
             console.log(`Received request to delete: ${hospitalId}`);
             fetchWithAuth(`/remove-hospital?id=${hospitalId}`, { method: 'DELETE' })
                 .then(response => {
+                    if (response.status === 401) {  // Check for 401 Unauthorized
+                        window.location.href = '/login';  // Redirect to login page
+                        return;  // Stop further execution
+                    }
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
@@ -1071,6 +1099,10 @@
             console.log(`Received request to delete: ${agentId}`);
             fetchWithAuth(`/remove-agent?id=${agentId}`, { method: 'DELETE' })
                 .then(response => {
+                    if (response.status === 401) {  // Check for 401 Unauthorized
+                        window.location.href = '/login';  // Redirect to login page
+                        return;  // Stop further execution
+                    }
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }

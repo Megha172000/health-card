@@ -33,7 +33,8 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             request ->
                 request
-                    .requestMatchers(
+                    .requestMatchers("/favicon.ico",
+                        "favicon.ico",
                         "login",
                         "register",
                         "admin-login",
