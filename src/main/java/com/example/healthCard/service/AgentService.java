@@ -73,30 +73,35 @@ public class AgentService {
   */
 
   public void addMembers(ChiefInfoDto chiefInfoDto) {
-    Optional<AgentEntity> agentEntity = agentRepo.findById(chiefInfoDto.getAgentId());
-    if (agentEntity.isEmpty()) {
-      throw new HealthCardException("invalid agent id", 123);
-    }
-    AgentEntity agent = agentEntity.get();
-    ChiefEntity chiefEntity = new ChiefEntity();
-    chiefEntity.setName(chiefInfoDto.getName());
-    chiefEntity.setEmailAddress(chiefInfoDto.getEmail());
-    chiefEntity.setIdentityType(chiefInfoDto.getIdentityType());
-    chiefEntity.setIdentityNumber(chiefInfoDto.getIdentityNumber());
-    chiefEntity.setAddress(chiefInfoDto.getAddress());
-    chiefEntity.setPhoneNumber(chiefInfoDto.getPhoneNumber());
-    chiefEntity.setAgentEntity(agent);
-    chiefEntity.setCreatedAt(LocalDateTime.now());
-    chiefRepo.save(chiefEntity);
-    List<FamilyMemberDto> familyMemberDtoList = chiefInfoDto.getFamilyMemberDtoList();
-    for (FamilyMemberDto familyMemberDto : familyMemberDtoList) {
-      MemberEntity memberEntity = new MemberEntity();
-      memberEntity.setName(familyMemberDto.getName());
-      memberEntity.setIdentityType(familyMemberDto.getIdentityType());
-      memberEntity.setIdentityNumber(familyMemberDto.getIdentityNumber());
-      memberEntity.setPhoneNumber(familyMemberDto.getPhoneNumber());
-      memberEntity.setChiefEntity(chiefEntity);
-      memberRepo.save(memberEntity);
+
+    try {
+      Optional<AgentEntity> agentEntity = agentRepo.findById(chiefInfoDto.getAgentId());
+      if (agentEntity.isEmpty()) {
+        throw new HealthCardException("Invalid agent id.", 400);
+      }
+      AgentEntity agent = agentEntity.get();
+      ChiefEntity chiefEntity = new ChiefEntity();
+      chiefEntity.setName(chiefInfoDto.getName());
+      chiefEntity.setEmailAddress(chiefInfoDto.getEmail());
+      chiefEntity.setIdentityType(chiefInfoDto.getIdentityType());
+      chiefEntity.setIdentityNumber(chiefInfoDto.getIdentityNumber());
+      chiefEntity.setAddress(chiefInfoDto.getAddress());
+      chiefEntity.setPhoneNumber(chiefInfoDto.getPhoneNumber());
+      chiefEntity.setAgentEntity(agent);
+      chiefEntity.setCreatedAt(LocalDateTime.now());
+      chiefRepo.save(chiefEntity);
+      List<FamilyMemberDto> familyMemberDtoList = chiefInfoDto.getFamilyMemberDtoList();
+      for (FamilyMemberDto familyMemberDto : familyMemberDtoList) {
+        MemberEntity memberEntity = new MemberEntity();
+        memberEntity.setName(familyMemberDto.getName());
+        memberEntity.setIdentityType(familyMemberDto.getIdentityType());
+        memberEntity.setIdentityNumber(familyMemberDto.getIdentityNumber());
+        memberEntity.setPhoneNumber(familyMemberDto.getPhoneNumber());
+        memberEntity.setChiefEntity(chiefEntity);
+        memberRepo.save(memberEntity);
+      }
+    } catch (Exception exception) {
+      throw new HealthCardException(exception.getLocalizedMessage(), 500);
     }
   }
 

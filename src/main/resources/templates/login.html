@@ -135,6 +135,7 @@
                 document.getElementById('loader').classList.remove('active');
               } else {
                 localStorage.setItem("jwtToken", data.body.token);
+                localStorage.setItem("agentId", data.body.id)
 
                 setTimeout(() => {
                   if (data.body.role === "Agent"){

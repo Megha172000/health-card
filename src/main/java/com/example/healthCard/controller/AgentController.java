@@ -62,6 +62,7 @@ public class AgentController {
         Map<String, String> res = new HashMap<>();
         res.put("token", token);
         res.put("role", agentEntity.getRole());
+        res.put("id", agentEntity.getId());
         return ResponseHandler.getSuccessResponse(res);
       } else {
         return ResponseHandler.getErrorResponse(
@@ -166,13 +167,18 @@ public class AgentController {
   }
 
   @PostMapping("/add-members")
-  public ResponseEntity<Object> addMembers(@RequestBody ChiefInfoDto chiefInfoDto) {
-    String emailAddress = chiefInfoDto.getEmail();
-    if (chiefRepo.existsByEmailAddress(emailAddress)) {
-      throw new HealthCardException("user already exist", 450);
+  public ResponseEntity<ResponseHandler> addMembers(@RequestBody ChiefInfoDto chiefInfoDto) {
+    try {
+      String emailAddress = chiefInfoDto.getEmail();
+      if (chiefRepo.existsByEmailAddress(emailAddress)) {
+        throw new HealthCardException("User already exist", 403);
+      }
+      agentService.addMembers(chiefInfoDto);
+      return ResponseHandler.getSuccessResponse(chiefInfoDto);
+    } catch (HealthCardException exception) {
+      return ResponseHandler.getErrorResponse(
+          HttpStatus.valueOf(exception.getErrorCode()), exception.getErrorMessage());
     }
-    agentService.addMembers(chiefInfoDto);
-    return new ResponseEntity<>(chiefInfoDto, HttpStatus.OK);
   }
 
   @PostMapping("/get-agent-member")

@@ -24,7 +24,7 @@ public class ChiefInfoDto {
   private String identityNumber;
 
   @JsonProperty(value = "address")
-  private String Address;
+  private String address;
 
   @JsonProperty(value = "phoneNumber")
   private long phoneNumber;
