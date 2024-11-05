@@ -35,6 +35,7 @@ public class SecurityConfig {
                 request
                     .requestMatchers("/favicon.ico",
                         "favicon.ico",
+                        "/",
                         "login",
                         "register",
                         "admin-login",
