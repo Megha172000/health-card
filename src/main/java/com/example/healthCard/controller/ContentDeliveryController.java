@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class ContentDeliveryController {
   @Autowired AgentService agentService;
 
+  @GetMapping("/")
+  public String defaultRoute() {
+    return "redirect:/login";
+  }
+
   @GetMapping("/login")
   public String loginContent() {
     return "login";
