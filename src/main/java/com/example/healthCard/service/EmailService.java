@@ -38,7 +38,7 @@ public class EmailService {
       Context context = new Context();
       context.setVariable("name", name);
       context.setVariable(
-          "url", "http://localhost:8080/activate-agent?email=" + toEmail + "&code=" + code);
+          "url", "http://prjhealthcard.com:8080/activate-agent?email=" + toEmail + "&code=" + code);
       String htmlContent = templateEngine.process("email", context);
       mimeMessageHelper.setText(htmlContent, true);
       emailSender.send(mimeMessage);
