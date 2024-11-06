@@ -34,7 +34,7 @@ public class EmailService {
       MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
       mimeMessageHelper.setTo(toEmail);
       mimeMessageHelper.setSubject(subject);
-      mimeMessageHelper.setFrom("meghapatidar172000@gmail.com");
+      mimeMessageHelper.setFrom("pavanrajtamoliya@gmail.com");
       Context context = new Context();
       context.setVariable("name", name);
       context.setVariable(
