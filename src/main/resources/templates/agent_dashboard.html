@@ -275,6 +275,16 @@
         <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank"> MDBootstrap.com </a>
     </div>
 </footer>
+
+<!-- Toast notification -->
+<div class="toast-container"></div>
+
+<!-- Loader -->
+<div id="loader" class="loader">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden"></span>
+    </div>
+</div>
 <!-- Footer -->
 
 <!-- SCRIPTS -->
@@ -352,6 +362,7 @@
 
     // Function to collect form data and send the POST request
     function submitForm() {
+        document.getElementById('loader').classList.add('active');
         // Get chief member details
         const chiefMember = {
             agentId: localStorage.getItem('agentId'),
@@ -394,15 +405,46 @@
             },
             body: JSON.stringify(requestBody)
         })
+
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                alert("Form submitted successfully!");
+                fetchMemberData(0);
+                document.getElementById('memberForm').reset();
+                showToast(data.body); // Use the success message from API response
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert("An error occurred. Please try again.");
-            });
+                showToast(error.message, 'danger'); // Use the error message from API response
+            })
+            .finally(() => {
+            document.getElementById('loader').classList.remove('active');
+        });
+    }
+
+    function showToast(message, type = 'success') {
+        const toastContainer = document.querySelector('.toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type} border-0 show`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+
+        toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-mdb-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toastContainer.removeChild(toast);
+        }, 5000);
     }
 
     let currentPage = 0;
@@ -462,6 +504,38 @@
             .catch(error => {
                 console.error('Error fetching member data:', error);
             });
+    }
+
+    function updatePaginationControls(data) {
+        const prevPageIcon = document.getElementById('prevPage');
+        const nextPageIcon = document.getElementById('nextPage');
+
+        // Enable/disable previous button
+        if (data.pageable.pageNumber > 0) {
+            prevPageIcon.classList.remove('disabled');
+            prevPageIcon.onclick = function() { changePage(data.pageable.pageNumber - 1); };
+            prevPageIcon.style.cursor = 'pointer';
+        } else {
+            prevPageIcon.classList.add('disabled');
+            prevPageIcon.onclick = null;
+            prevPageIcon.style.cursor = 'default';
+        }
+
+        // Enable/disable next button
+        if (data.pageable.pageNumber < data.totalPages - 1) {
+            nextPageIcon.classList.remove('disabled');
+            nextPageIcon.onclick = function() { changePage(data.pageable.pageNumber + 1); };
+            nextPageIcon.style.cursor = 'pointer';
+        } else {
+            nextPageIcon.classList.add('disabled');
+            nextPageIcon.onclick = null;
+            nextPageIcon.style.cursor = 'default';
+        }
+    }
+
+    function changePage(page) {
+        currentPage = page;
+        fetchHospitalData(page);
     }
 
     window.addEventListener('load', fetchMemberData(0));
