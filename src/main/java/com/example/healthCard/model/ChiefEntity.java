@@ -13,7 +13,6 @@ import lombok.Setter;
 public class ChiefEntity {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.UUID)
   @Column(name = "id")
   private String id;
 

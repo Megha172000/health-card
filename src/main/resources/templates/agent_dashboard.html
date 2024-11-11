@@ -270,6 +270,25 @@
     </div>
 </main>
 
+<div class="modal fade" id="cardIdModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog cascading-modal modal-avatar modal-sm" role="document">
+        <!--Content-->
+        <div class="modal-content">
+            <!--Body-->
+            <div class="modal-body text-center mb-1">
+
+                <h5 class="mt-1 mb-2">Your Card ID</h5>
+
+                <p id="cardId"></p>
+
+            </div>
+
+        </div>
+        <!--/.Content-->
+    </div>
+</div>
+
 <!-- Footer -->
 <footer class="page-footer text-center font-small mt-4 wow fadeIn">
     <div class="footer-copyright py-3">
@@ -413,6 +432,8 @@
                 console.log('Success:', data);
                 fetchMemberData(0);
                 document.getElementById('memberForm').reset();
+                document.getElementById("cardId").innerText = data.body;
+                $('#cardIdModal').modal('show');
                 showToast(data.body); // Use the success message from API response
             })
             .catch((error) => {

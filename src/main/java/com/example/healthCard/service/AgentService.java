@@ -72,7 +72,7 @@ public class AgentService {
   }
   */
 
-  public void addMembers(ChiefInfoDto chiefInfoDto) {
+  public String addMembers(ChiefInfoDto chiefInfoDto) {
 
     try {
       Optional<AgentEntity> agentEntity = agentRepo.findById(chiefInfoDto.getAgentId());
@@ -81,6 +81,9 @@ public class AgentService {
       }
       AgentEntity agent = agentEntity.get();
       ChiefEntity chiefEntity = new ChiefEntity();
+      int randomNumber = CommonUtil.generateRandomNumber();
+      String cardNumber = "HC-" + randomNumber;
+      chiefEntity.setId(cardNumber);
       chiefEntity.setName(chiefInfoDto.getName());
       chiefEntity.setEmailAddress(chiefInfoDto.getEmail());
       chiefEntity.setIdentityType(chiefInfoDto.getIdentityType());
@@ -100,6 +103,7 @@ public class AgentService {
         memberEntity.setChiefEntity(chiefEntity);
         memberRepo.save(memberEntity);
       }
+      return cardNumber;
     } catch (Exception exception) {
       throw new HealthCardException(exception.getLocalizedMessage(), 500);
     }

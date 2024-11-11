@@ -171,10 +171,10 @@ public class AgentController {
     try {
       String emailAddress = chiefInfoDto.getEmail();
       if (chiefRepo.existsByEmailAddress(emailAddress)) {
-        throw new HealthCardException("User already exist", 403);
+        throw new HealthCardException("User already exist.", 403);
       }
-      agentService.addMembers(chiefInfoDto);
-      return ResponseHandler.getSuccessResponse(chiefInfoDto);
+      String cardNumber = agentService.addMembers(chiefInfoDto);
+      return ResponseHandler.getSuccessResponse(cardNumber);
     } catch (HealthCardException exception) {
       return ResponseHandler.getErrorResponse(
           HttpStatus.valueOf(exception.getErrorCode()), exception.getErrorMessage());
