@@ -138,7 +138,7 @@
                 localStorage.setItem("agentId", data.body.id)
 
                 setTimeout(() => {
-                  if (data.body.role === "Agent"){
+                  if (data.body.role === "AGENT"){
                     window.location.href = "/agent-dashboard"; // Redirect on success
                   }else {
                     window.location.href = "/dashboard"; // Redirect on success
