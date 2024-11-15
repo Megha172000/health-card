@@ -9,14 +9,14 @@ import lombok.Data;
 public class HospitalDto {
 
   @JsonProperty(value = "name")
-  private String Name;
+  private String name;
 
   @JsonProperty(value = "phoneNumber")
-  private long PhoneNumber;
+  private long phoneNumber;
 
   @JsonProperty(value = "address")
-  private String Address;
+  private String address;
 
   @JsonProperty(value = "type")
-  private String Type;
+  private String type;
 }

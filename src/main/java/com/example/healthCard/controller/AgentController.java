@@ -171,10 +171,10 @@ public class AgentController {
     try {
       String emailAddress = chiefInfoDto.getEmail();
       if (chiefRepo.existsByEmailAddress(emailAddress)) {
-        throw new HealthCardException("User already exist.", 403);
+        throw new HealthCardException("User already exist", 403);
       }
-      String cardNumber = agentService.addMembers(chiefInfoDto);
-      return ResponseHandler.getSuccessResponse(cardNumber);
+      String cardId = agentService.addMembers(chiefInfoDto);
+      return ResponseHandler.getSuccessResponse(cardId);
     } catch (HealthCardException exception) {
       return ResponseHandler.getErrorResponse(
           HttpStatus.valueOf(exception.getErrorCode()), exception.getErrorMessage());
@@ -200,9 +200,11 @@ public class AgentController {
   public ResponseEntity<Object> listOfMembersByAgentId(
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "5") int size,
-      String agentId) {
-    List<ChiefDto> chiefDtos = memberService.listMembersByAgentId(page, size, agentId);
-    return new ResponseEntity<>(chiefDtos, HttpStatus.OK);
+      @RequestParam String agentId,
+      @RequestParam(required = false) String filter) {
+    ResponseEntity<ResponseHandler> response =
+        memberService.listMembersByAgentId(page, size, agentId, filter);
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @GetMapping("/list-chief-members")

@@ -7,9 +7,11 @@ import com.example.healthCard.dto.FamilyMemberDto;
 import com.example.healthCard.healthCardException.HealthCardException;
 import com.example.healthCard.model.AgentEntity;
 import com.example.healthCard.model.ChiefEntity;
+import com.example.healthCard.model.HospitalEntity;
 import com.example.healthCard.model.MemberEntity;
 import com.example.healthCard.repo.AgentRepo;
 import com.example.healthCard.repo.ChiefRepo;
+import com.example.healthCard.repo.HospitalRepo;
 import com.example.healthCard.repo.MemberRepo;
 import com.example.healthCard.util.CommonUtil;
 import java.time.LocalDateTime;
@@ -31,6 +33,8 @@ public class AgentService {
   @Autowired MemberRepo memberRepo;
 
   @Autowired EmailService emailService;
+
+  @Autowired HospitalRepo hospitalRepo;
 
   public void addAgent(AgentInfoDto agentInfoDto) {
     int code = CommonUtil.generateRandomNumber();
@@ -79,6 +83,13 @@ public class AgentService {
       if (agentEntity.isEmpty()) {
         throw new HealthCardException("Invalid agent id.", 400);
       }
+
+      Optional<HospitalEntity> optionalHospitalEntity =
+          hospitalRepo.findByName(chiefInfoDto.getHospitalName());
+      if (optionalHospitalEntity.isEmpty()) {
+        throw new HealthCardException("Invalid hospital name.", 400);
+      }
+      HospitalEntity hospitalEntity = optionalHospitalEntity.get();
       AgentEntity agent = agentEntity.get();
       ChiefEntity chiefEntity = new ChiefEntity();
       int randomNumber = CommonUtil.generateRandomNumber();
@@ -86,6 +97,7 @@ public class AgentService {
       chiefEntity.setId(cardNumber);
       chiefEntity.setName(chiefInfoDto.getName());
       chiefEntity.setEmailAddress(chiefInfoDto.getEmail());
+      chiefEntity.setHospitalEntity(hospitalEntity);
       chiefEntity.setIdentityType(chiefInfoDto.getIdentityType());
       chiefEntity.setIdentityNumber(chiefInfoDto.getIdentityNumber());
       chiefEntity.setAddress(chiefInfoDto.getAddress());

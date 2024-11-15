@@ -52,4 +52,10 @@ public class HospitalController {
     hospitalService.removeHospital(id);
     return ResponseHandler.getSuccessResponse("Hospital removed successfully.");
   }
+
+  @GetMapping("/list-hospital-name")
+  public ResponseEntity<ResponseHandler> listHospitalName() {
+    ResponseEntity<ResponseHandler> response = hospitalService.listHospitalName();
+    return ResponseHandler.getSuccessResponse(response);
+  }
 }

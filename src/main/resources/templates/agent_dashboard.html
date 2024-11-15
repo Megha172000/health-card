@@ -77,6 +77,10 @@
             color: teal !important;
         }
 
+        .sidebar-fixed .logo-wrapper img {
+            max-height: 105px;
+        }
+
         .loader {
             position: fixed;
             top: 0;
@@ -156,7 +160,7 @@
     <!-- Sidebar -->
     <div class="sidebar-fixed position-fixed">
         <a class="logo-wrapper waves-effect">
-            <img src="/images/logo5.png" class="img-fluid" alt="Logo">
+            <img src="/images/logo2.png" class="img-fluid" alt="">
         </a>
         <div class="list-group list-group-flush">
             <a href="#" class="list-group-item active waves-effect">
@@ -187,7 +191,7 @@
                             <h5 class="mb-0">Member Details</h5>
                             <!-- Actions -->
                             <div class="d-flex align-items-center">
-                                <form class="d-flex align-items-center" onsubmit="fetchHospitalData(0); return false;">
+                                <form class="d-flex align-items-center" onsubmit="fetchMemberData(0); return false;">
                                     <!-- Search input -->
                                     <input type="search" id="memberSearchFilter" placeholder="Search..." aria-label="Search" class="form-control mr-2">
                                     <button class="btn btn-secondary btn-sm teal-color-button" type="submit">
@@ -204,6 +208,7 @@
                                 <!-- Table head -->
                                 <thead class="blue-grey lighten-4">
                                 <tr>
+                                    <th>UID</th>
                                     <th>Name</th>
                                     <th>Address</th>
                                     <th>Email Address</th>
@@ -251,6 +256,13 @@
                     <div class="form-group">
                         <label for="chiefAddress">Address</label>
                         <input type="text" class="form-control" id="chiefAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hospitalName">Hospital Name</label>
+                        <select class="form-control" id="hospitalName" required>
+                            <option value="">Select Hospital</option>
+                            <!-- Hospital options will be populated here dynamically -->
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="chiefIdentityType">Identity Type</label>
@@ -377,6 +389,36 @@
         return fetch(url, options);
     }
 
+    function loadHospitals() {
+        // Example API endpoint to fetch hospitals (you can modify this according to your API)
+        const apiUrl = '/list-hospital-name';
+
+        // Make the API call to fetch hospitals
+        fetchWithAuth(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.body.body) {
+                    const hospitalSelect = document.getElementById('hospitalName');
+
+                    // Clear existing options
+                    hospitalSelect.innerHTML = '<option value="">Select Hospital</option>';
+
+                    // Add hospital options dynamically
+                    data.body.body.body.forEach(hospital => {
+                        const option = document.createElement('option');
+                        option.value = hospital;  // Assuming the hospital object has an 'id' field
+                        option.textContent = hospital;  // Assuming the hospital object has a 'name' field
+                        hospitalSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('No hospital data found or invalid response format');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching hospitals:', error);
+            });
+    }
+
 
     // Function to add a new member input field dynamically
 
@@ -389,6 +431,7 @@
             agentId: localStorage.getItem('agentId'),
             name: document.getElementById('chiefName').value,
             email: document.getElementById('chiefEmail').value,
+            hospitalName: document.getElementById('hospitalName').value,
             identityType: document.getElementById('chiefIdentityType').value,
             identityNumber: document.getElementById('chiefIdentityNumber').value,
             address: document.getElementById('chiefAddress').value,
@@ -434,7 +477,7 @@
                 document.getElementById('memberForm').reset();
                 document.getElementById("cardId").innerText = data.body;
                 $('#cardIdModal').modal('show');
-                showToast(data.body); // Use the success message from API response
+                showToast("Member added successfully."); // Use the success message from API response
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -474,9 +517,14 @@
     const pageSize = 5; // Number of items per page
 
     function fetchMemberData(page = 0) {
+        document.getElementById('loader').classList.add('active');
         const filter = document.getElementById('memberSearchFilter').value.trim(); // Get the filter input value
         // Construct the URL with query parameters
-        let url = `/list-chief?page=${page}&size=${pageSize}`;
+        let agentId =  localStorage.getItem('agentId');
+        let url = `/list-members-by-agent-id?page=${page}&size=${pageSize}`;
+        if (agentId){
+            url += `&agentId=${encodeURIComponent(agentId)}`; // Add the filter parameter if it's not empty
+        }
         if (filter) {
             url += `&filter=${encodeURIComponent(filter)}`; // Add the filter parameter if it's not empty
         }
@@ -496,10 +544,11 @@
                 tableBody.innerHTML = ''; // Clear any existing rows
 
                 // Append rows to the table
-                data.forEach(member => {
+                data.body.body.forEach(member => {
                     const row = document.createElement('tr');
                     console.log(member.id);
                     row.innerHTML = `
+                    <td>${member.id}</td>
                     <td>${member.name}</td>
                     <td>${member.address}</td>
                     <td>${member.emailAddress}</td>
@@ -526,6 +575,9 @@
             })
             .catch(error => {
                 console.error('Error fetching member data:', error);
+            })
+            .finally(() => {
+                document.getElementById('loader').classList.remove('active');
             });
     }
 
@@ -534,9 +586,9 @@
         const nextPageIcon = document.getElementById('nextPage');
 
         // Enable/disable previous button
-        if (data.pageable.pageNumber > 0) {
+        if (data.body.pageable.pageNumber > 0) {
             prevPageIcon.classList.remove('disabled');
-            prevPageIcon.onclick = function() { changePage(data.pageable.pageNumber - 1); };
+            prevPageIcon.onclick = function() { changePage(data.body.pageable.pageNumber - 1); };
             prevPageIcon.style.cursor = 'pointer';
         } else {
             prevPageIcon.classList.add('disabled');
@@ -545,9 +597,9 @@
         }
 
         // Enable/disable next button
-        if (data.pageable.pageNumber < data.totalPages - 1) {
+        if (data.body.pageable.pageNumber < data.body.totalPages - 1) {
             nextPageIcon.classList.remove('disabled');
-            nextPageIcon.onclick = function() { changePage(data.pageable.pageNumber + 1); };
+            nextPageIcon.onclick = function() { changePage(data.body.pageable.pageNumber + 1); };
             nextPageIcon.style.cursor = 'pointer';
         } else {
             nextPageIcon.classList.add('disabled');
@@ -558,10 +610,11 @@
 
     function changePage(page) {
         currentPage = page;
-        fetchHospitalData(page);
+        fetchMemberData(page);
     }
 
     window.addEventListener('load', fetchMemberData(0));
+    document.addEventListener('DOMContentLoaded', loadHospitals);
 
 </script>
 </body>

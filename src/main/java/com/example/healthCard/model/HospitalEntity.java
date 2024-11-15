@@ -18,6 +18,9 @@ public class HospitalEntity {
   @OneToMany(mappedBy = "hospitalEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<HealthCardConsultant> healthCardConsultantList;
 
+  @OneToMany(mappedBy = "hospitalEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<ChiefEntity> chiefEntityList;
+
   @Column(name = "name")
   private String name;
 

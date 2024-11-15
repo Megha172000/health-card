@@ -17,6 +17,9 @@ public class ChiefInfoDto {
   @JsonProperty(value = "email")
   private String email;
 
+  @JsonProperty(value = "hospitalName")
+  private String hospitalName;
+
   @JsonProperty(value = "identityType")
   private String identityType;
 

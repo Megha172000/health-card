@@ -2,6 +2,7 @@ package com.example.healthCard.service;
 
 import com.example.healthCard.dto.ChiefDto;
 import com.example.healthCard.dto.MemberDto;
+import com.example.healthCard.handler.ResponseHandler;
 import com.example.healthCard.model.ChiefEntity;
 import com.example.healthCard.model.MemberEntity;
 import com.example.healthCard.repo.ChiefRepo;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,11 +26,27 @@ public class MemberService {
     return chiefEntityList.stream().map(this::convertToChiefDto).toList();
   }
 
-  public List<ChiefDto> listMembersByAgentId(int page, int size, String agentId) {
+  public ResponseEntity<ResponseHandler> listMembersByAgentId(
+      int page, int size, String agentId, String filter) {
     Pageable pageable = PageRequest.of(page, size);
-    Page<ChiefEntity> chiefEntityPage = chiefRepo.findAllByAgentEntityId(agentId, pageable);
+    Page<ChiefEntity> chiefEntityPage;
+    if (filter != null && !filter.isEmpty()) {
+      chiefEntityPage = chiefRepo.findAllByIdAndAgentEntityId(filter, agentId, pageable);
+    } else {
+      chiefEntityPage = chiefRepo.findAllByAgentEntityId(agentId, pageable);
+    }
     List<ChiefEntity> chiefEntityList = chiefEntityPage.getContent();
-    return chiefEntityList.stream().map(this::convertToChiefDto).toList();
+
+    List<ChiefDto> chiefDtos = chiefEntityList.stream().map(this::convertToChiefDto).toList();
+
+    ResponseHandler responseHandler =
+        ResponseHandler.builder()
+            .body(chiefDtos)
+            .code(1000)
+            .pageable(pageable)
+            .totalPages(chiefEntityPage.getTotalPages())
+            .build();
+    return ResponseHandler.getSuccessResponse(responseHandler);
   }
 
   public ChiefDto convertToChiefDto(ChiefEntity chiefEntity) {

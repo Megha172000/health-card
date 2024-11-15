@@ -27,6 +27,10 @@ public class ChiefEntity {
   @JoinColumn(name = "agent_id", nullable = false)
   private AgentEntity agentEntity;
 
+  @ManyToOne
+  @JoinColumn(name = "hospital_id", nullable = false)
+  private HospitalEntity hospitalEntity;
+
   @Column(name = "email_Address")
   private String emailAddress;
 
