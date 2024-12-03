@@ -45,7 +45,8 @@ public class SecurityConfig {
                         "agent-dashboard",
                         "/activate-agent",
                         "/create-password",
-                        "/create-agent-password")
+                        "/create-agent-password",
+                        "/actuator/**")
                     .permitAll()
                     .requestMatchers(
                         "/css/**", "/js/**", "/images/**", "/webjars/**", "/static/**", "/font/**")
