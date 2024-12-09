@@ -51,7 +51,11 @@ public class AgentService {
     agentEntity.setRole(ApplicationConstants.USER_ROLES.AGENT.name());
     agentRepo.save(agentEntity);
     emailService.sendTempEmail(
-        agentInfoDto.getName(), agentInfoDto.getEmail(), "Activation email", code);
+        agentInfoDto.getName(),
+        agentInfoDto.getEmail(),
+        "Activation email",
+        code,
+        ApplicationConstants.OPERATION.ACTIVATE_AGENT.name());
   }
 
   public Page<AgentEntity> listAgents(int page, int size, String filter) {

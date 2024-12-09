@@ -25,4 +25,8 @@ public interface ChiefRepo extends JpaRepository<ChiefEntity, String> {
   Page<ChiefEntity> findAllByIdAndAgentEntityId(String id, String agentId, Pageable pageable);
 
   Page<ChiefEntity> findAllById(String id, Pageable pageable);
+
+  Page<ChiefEntity> findAllByHospitalEntityId(String hospitalId, Pageable pageable);
+
+  Page<ChiefEntity> findAllByIdOrHospitalEntityId(String id, String hospitalId, Pageable pageable);
 }

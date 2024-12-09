@@ -7,4 +7,9 @@ public class ApplicationConstants {
     AGENT,
     HOSPITAL
   }
+
+  public enum OPERATION {
+    ACTIVATE_AGENT,
+    ACTIVATE_HOSPITAL
+  }
 }

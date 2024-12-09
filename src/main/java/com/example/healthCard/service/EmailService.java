@@ -1,5 +1,6 @@
 package com.example.healthCard.service;
 
+import com.example.healthCard.constants.ApplicationConstants;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,13 @@ public class EmailService {
     System.out.println("Message sent successfully");
   }
 
-  public void sendTempEmail(String name, String toEmail, String subject, int code) {
+  public void sendTempEmail(
+      String name, String toEmail, String subject, int code, String operation) {
     try {
+      String urlPath =
+          operation.equals(ApplicationConstants.OPERATION.ACTIVATE_AGENT.name())
+              ? "https://app.prjhealthcard.com/activate-agent?email="
+              : "https://app.prjhealthcard.com/activate-hospital?email=";
       MimeMessage mimeMessage = emailSender.createMimeMessage();
       MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
       mimeMessageHelper.setTo(toEmail);
@@ -37,8 +43,7 @@ public class EmailService {
       mimeMessageHelper.setFrom("pavanrajtamoliya@gmail.com");
       Context context = new Context();
       context.setVariable("name", name);
-      context.setVariable(
-          "url", "http://prjhealthcard.com:8080/activate-agent?email=" + toEmail + "&code=" + code);
+      context.setVariable("url", urlPath + toEmail + "&code=" + code);
       String htmlContent = templateEngine.process("email", context);
       mimeMessageHelper.setText(htmlContent, true);
       emailSender.send(mimeMessage);

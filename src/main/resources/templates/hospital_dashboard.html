@@ -237,48 +237,6 @@
                 <!--/.Card-->
             </div>
         </div>
-        <!-- Form -->
-        <div class="card mb-4 wow fadeIn">
-            <div class="card-body">
-                <form id="memberForm" onsubmit="submitForm(); return false;">
-                <div class="form-group">
-                        <label for="chiefName">Chief Member Name</label>
-                        <input type="text" class="form-control" id="chiefName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="chiefEmail">Email Address</label>
-                        <input type="email" class="form-control" id="chiefEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="chiefPhoneNumber">Mobile Number</label>
-                        <input type="text" class="form-control" id="chiefPhoneNumber" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="chiefAddress">Address</label>
-                        <input type="text" class="form-control" id="chiefAddress" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="hospitalName">Hospital Name</label>
-                        <select class="form-control" id="hospitalName" required>
-                            <option value="">Select Hospital</option>
-                            <!-- Hospital options will be populated here dynamically -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="chiefIdentityType">Identity Type</label>
-                        <input type="text" class="form-control" id="chiefIdentityType" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="chiefIdentityNumber">Identity Number</label>
-                        <input type="text" class="form-control" id="chiefIdentityNumber" required>
-                    </div>
-                    <div id="memberAccordion">
-                        <button type="button" class="btn btn-primary mb-3" id="addMemberBtn" onclick="addMemberForm()">Add Another Member</button>
-                    </div>
-                    <button type="submit" class="btn btn-success">Submit</button>
-                </form>
-            </div>
-        </div>
     </div>
 </main>
 
@@ -339,42 +297,6 @@
     let memberCount = 0;
     const maxMembers = 4;
 
-    function addMemberForm() {
-        if (memberCount < maxMembers) {
-            memberCount++;
-            const memberForm = document.createElement('div');
-            memberForm.className = 'form-group';
-            memberForm.id = 'memberForm' + memberCount;
-            memberForm.innerHTML = `
-                <div class="form-group">
-                    <label for="memberName${memberCount}">Member Name</label>
-                    <input type="text" class="form-control" id="memberName${memberCount}" required>
-                </div>
-                <div class="form-group">
-                    <label for="memberMobile${memberCount}">Mobile Number</label>
-                    <input type="text" class="form-control" id="memberMobile${memberCount}" required>
-                </div>
-                <button type="button" class="btn btn-danger mb-3" onclick="removeMemberForm(${memberCount})">Remove Member</button>
-                <hr>
-            `;
-            document.getElementById('memberAccordion').insertBefore(memberForm, document.getElementById('addMemberBtn'));
-        }
-
-        if (memberCount === maxMembers) {
-            document.getElementById('addMemberBtn').disabled = true;
-        }
-    }
-
-    function removeMemberForm(id) {
-        const memberForm = document.getElementById('memberForm' + id);
-        document.getElementById('memberAccordion').removeChild(memberForm);
-        memberCount--;
-
-        if (memberCount < maxMembers) {
-            document.getElementById('addMemberBtn').disabled = false;
-        }
-    }
-
     function getJwtToken() {
         return localStorage.getItem('jwtToken');
     }
@@ -387,105 +309,6 @@
             };
         }
         return fetch(url, options);
-    }
-
-    function loadHospitals() {
-        // Example API endpoint to fetch hospitals (you can modify this according to your API)
-        const apiUrl = '/list-hospital-name';
-
-        // Make the API call to fetch hospitals
-        fetchWithAuth(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.body.body) {
-                    const hospitalSelect = document.getElementById('hospitalName');
-
-                    // Clear existing options
-                    hospitalSelect.innerHTML = '<option value="">Select Hospital</option>';
-
-                    // Add hospital options dynamically
-                    data.body.body.body.forEach(hospital => {
-                        const option = document.createElement('option');
-                        option.value = hospital;  // Assuming the hospital object has an 'id' field
-                        option.textContent = hospital;  // Assuming the hospital object has a 'name' field
-                        hospitalSelect.appendChild(option);
-                    });
-                } else {
-                    console.error('No hospital data found or invalid response format');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching hospitals:', error);
-            });
-    }
-
-
-    // Function to add a new member input field dynamically
-
-
-    // Function to collect form data and send the POST request
-    function submitForm() {
-        document.getElementById('loader').classList.add('active');
-        // Get chief member details
-        const chiefMember = {
-            agentId: localStorage.getItem('agentId'),
-            name: document.getElementById('chiefName').value,
-            email: document.getElementById('chiefEmail').value,
-            hospitalName: document.getElementById('hospitalName').value,
-            identityType: document.getElementById('chiefIdentityType').value,
-            identityNumber: document.getElementById('chiefIdentityNumber').value,
-            address: document.getElementById('chiefAddress').value,
-            phoneNumber: document.getElementById('chiefPhoneNumber').value,
-        };
-
-        // Array to store member details
-        const members = [];
-
-        // Collect additional members' details
-        for (let i = 1; i <= memberCount; i++) {
-            const name = document.getElementById(`memberName${i}`);
-            const phoneNumber = document.getElementById(`memberMobile${i}`);
-
-            // Only add members with non-empty values (in case some are removed)
-            if (name && phoneNumber) {
-                members.push({
-                    name: name.value,
-                    phoneNumber: phoneNumber.value
-                });
-            }
-        }
-
-        // Prepare the final request body
-        const requestBody = {
-            ...chiefMember,
-            members: members
-        };
-
-        // Send the request
-        fetchWithAuth('/add-members', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        })
-
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                fetchMemberData(0);
-                document.getElementById('memberForm').reset();
-                document.getElementById("cardId").innerText = data.body;
-                $('#cardIdModal').modal('show');
-                showToast("Member added successfully."); // Use the success message from API response
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                showToast(error.message, 'danger'); // Use the error message from API response
-            })
-            .finally(() => {
-            document.getElementById('loader').classList.remove('active');
-        });
     }
 
     function showToast(message, type = 'success') {
@@ -520,9 +343,13 @@
         document.getElementById('loader').classList.add('active');
         const filter = document.getElementById('memberSearchFilter').value.trim(); // Get the filter input value
         // Construct the URL with query parameters
-        let url = `/list-all-members?page=${page}&size=${pageSize}`;
+        let url = `/list-members-by-hospital-id?page=${page}&size=${pageSize}`;
         if (filter) {
             url += `&filter=${encodeURIComponent(filter)}`; // Add the filter parameter if it's not empty
+        }
+        let hospitalId =  localStorage.getItem('hospitalId');
+        if (hospitalId){
+            url += `&hospitalId=${encodeURIComponent(hospitalId)}`; // Add the filter parameter if it's not empty
         }
         fetchWithAuth(url)
             .then(response => {
@@ -610,7 +437,6 @@
     }
 
     window.addEventListener('load', fetchMemberData(0));
-    document.addEventListener('DOMContentLoaded', loadHospitals);
 
 </script>
 </body>

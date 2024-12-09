@@ -43,9 +43,12 @@ public class SecurityConfig {
                         "/images/*",
                         "/dashboard",
                         "agent-dashboard",
+                        "hospital-dashboard",
                         "/activate-agent",
                         "/create-password",
                         "/create-agent-password",
+                        "create-hospital-password",
+                        "activate-hospital",
                         "/actuator/**")
                     .permitAll()
                     .requestMatchers(

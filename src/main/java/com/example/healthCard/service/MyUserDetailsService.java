@@ -2,9 +2,11 @@ package com.example.healthCard.service;
 
 import com.example.healthCard.model.AdminEntity;
 import com.example.healthCard.model.AgentEntity;
+import com.example.healthCard.model.HospitalEntity;
 import com.example.healthCard.model.UserPrincipal;
 import com.example.healthCard.repo.AdminRepo;
 import com.example.healthCard.repo.AgentRepo;
+import com.example.healthCard.repo.HospitalRepo;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,13 +21,23 @@ public class MyUserDetailsService implements UserDetailsService {
 
   @Autowired private AgentRepo agentRepo;
 
+  @Autowired private HospitalRepo hospitalRepo;
+
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     AdminEntity adminEntity = adminRepo.findByUserName(username);
     if (adminEntity == null) {
       Optional<AgentEntity> agentEntity = agentRepo.findByEmailAddress(username);
       if (agentEntity.isEmpty()) {
-        throw new UsernameNotFoundException("user not found");
+        Optional<HospitalEntity> optionalHospitalEntity = hospitalRepo.findByEmailAddress(username);
+        if (optionalHospitalEntity.isEmpty()) {
+          throw new UsernameNotFoundException("user not found");
+        } else {
+          AdminEntity admin = new AdminEntity();
+          admin.setUserName(optionalHospitalEntity.get().getEmailAddress());
+          admin.setPassword(optionalHospitalEntity.get().getPassword());
+          return new UserPrincipal(admin);
+        }
       } else {
         AdminEntity admin = new AdminEntity();
         admin.setUserName(agentEntity.get().getEmailAddress());

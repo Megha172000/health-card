@@ -5,11 +5,9 @@ import com.example.healthCard.handler.ResponseHandler;
 import com.example.healthCard.healthCardException.HealthCardException;
 import com.example.healthCard.model.AgentEntity;
 import com.example.healthCard.model.ChiefEntity;
+import com.example.healthCard.model.HospitalEntity;
 import com.example.healthCard.model.MemberEntity;
-import com.example.healthCard.repo.AdminRepo;
-import com.example.healthCard.repo.AgentRepo;
-import com.example.healthCard.repo.ChiefRepo;
-import com.example.healthCard.repo.MemberRepo;
+import com.example.healthCard.repo.*;
 import com.example.healthCard.service.AgentService;
 import com.example.healthCard.service.JWTService;
 import com.example.healthCard.service.MemberService;
@@ -48,6 +46,8 @@ public class AgentController {
 
   @Autowired MemberService memberService;
 
+  @Autowired HospitalRepo hospitalRepo;
+
   @PostMapping("/admin-login")
   public ResponseEntity<ResponseHandler> agentLogin(@RequestBody AdminDto adminDto) {
 
@@ -57,13 +57,30 @@ public class AgentController {
               new UsernamePasswordAuthenticationToken(
                   adminDto.getUserName(), adminDto.getPassword()));
       if (authentication.isAuthenticated()) {
-        AgentEntity agentEntity = agentRepo.findByEmailAddress(adminDto.getUserName()).get();
-        String token = jwtService.generateToken(adminDto.getUserName());
-        Map<String, String> res = new HashMap<>();
-        res.put("token", token);
-        res.put("role", agentEntity.getRole());
-        res.put("id", agentEntity.getId());
-        return ResponseHandler.getSuccessResponse(res);
+        Optional<AgentEntity> optionalAgentEntity =
+            agentRepo.findByEmailAddress(adminDto.getUserName());
+        if (optionalAgentEntity.isPresent()) {
+          AgentEntity agentEntity = optionalAgentEntity.get();
+          String token = jwtService.generateToken(adminDto.getUserName());
+          Map<String, String> res = new HashMap<>();
+          res.put("token", token);
+          res.put("role", agentEntity.getRole());
+          res.put("id", agentEntity.getId());
+          return ResponseHandler.getSuccessResponse(res);
+        } else {
+          Optional<HospitalEntity> optionalHospitalEntity =
+              hospitalRepo.findByEmailAddress(adminDto.getUserName());
+          if (optionalHospitalEntity.isEmpty()) {
+            throw new HealthCardException("Invalid user name or password.", 500);
+          }
+          HospitalEntity hospitalEntity = optionalHospitalEntity.get();
+          String token = jwtService.generateToken(adminDto.getUserName());
+          Map<String, String> res = new HashMap<>();
+          res.put("token", token);
+          res.put("role", "Hospital");
+          res.put("id", hospitalEntity.getId());
+          return ResponseHandler.getSuccessResponse(res);
+        }
       } else {
         return ResponseHandler.getErrorResponse(
             HttpStatus.NOT_FOUND, "Please enter valid email and password");
@@ -207,13 +224,23 @@ public class AgentController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+  @GetMapping("/list-members-by-hospital-id")
+  public ResponseEntity<Object> listOfMembersByHospitalId(
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "5") int size,
+      @RequestParam String hospitalId,
+      @RequestParam(required = false) String filter) {
+    ResponseEntity<ResponseHandler> response =
+        memberService.listMembersByHospitalId(page, size, hospitalId, filter);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
   @GetMapping("/list-all-members")
   public ResponseEntity<Object> listAllMembers(
-    @RequestParam(defaultValue = "0") int page,
-    @RequestParam(defaultValue = "5") int size,
-    @RequestParam(required = false) String filter){
-    ResponseEntity<ResponseHandler> response =
-            memberService.listAllMembers(page, size, filter);
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "5") int size,
+      @RequestParam(required = false) String filter) {
+    ResponseEntity<ResponseHandler> response = memberService.listAllMembers(page, size, filter);
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 

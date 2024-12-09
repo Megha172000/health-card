@@ -41,6 +41,10 @@ public class Validator {
       throw new HealthCardException(
           "You must enter a hospitalAddress.", HttpStatus.BAD_REQUEST.value());
     }
+    if (hospitalDto.getEmailAddress() == null || hospitalDto.getEmailAddress().isEmpty()) {
+      throw new HealthCardException(
+          "You must enter a email address.", HttpStatus.BAD_REQUEST.value());
+    }
     if (String.valueOf(hospitalDto.getPhoneNumber()).length() != 10) {
       throw new HealthCardException(
           "you must enter a valid phoneNumber.", HttpStatus.BAD_REQUEST.value());

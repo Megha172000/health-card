@@ -19,4 +19,8 @@ public interface HospitalRepo extends JpaRepository<HospitalEntity, String> {
   List<String> findHospitalNames();
 
   Optional<HospitalEntity> findByName(String name);
+
+  boolean existsByEmailAddress(String emailAddress);
+
+  Optional<HospitalEntity> findByEmailAddress(String emailAddress);
 }

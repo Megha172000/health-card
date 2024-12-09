@@ -49,8 +49,30 @@ public class MemberService {
     return ResponseHandler.getSuccessResponse(responseHandler);
   }
 
-  public ResponseEntity<ResponseHandler> listAllMembers(
-          int page, int size,String filter) {
+  public ResponseEntity<ResponseHandler> listMembersByHospitalId(
+      int page, int size, String hospitalId, String filter) {
+    Pageable pageable = PageRequest.of(page, size);
+    Page<ChiefEntity> chiefEntityPage;
+    if (filter != null && !filter.isEmpty()) {
+      chiefEntityPage = chiefRepo.findAllByIdOrHospitalEntityId(filter, hospitalId, pageable);
+    } else {
+      chiefEntityPage = chiefRepo.findAllByHospitalEntityId(hospitalId, pageable);
+    }
+    List<ChiefEntity> chiefEntityList = chiefEntityPage.getContent();
+
+    List<ChiefDto> chiefDtos = chiefEntityList.stream().map(this::convertToChiefDto).toList();
+
+    ResponseHandler responseHandler =
+        ResponseHandler.builder()
+            .body(chiefDtos)
+            .code(1000)
+            .pageable(pageable)
+            .totalPages(chiefEntityPage.getTotalPages())
+            .build();
+    return ResponseHandler.getSuccessResponse(responseHandler);
+  }
+
+  public ResponseEntity<ResponseHandler> listAllMembers(int page, int size, String filter) {
     Pageable pageable = PageRequest.of(page, size);
     Page<ChiefEntity> chiefEntityPage;
     if (filter != null && !filter.isEmpty()) {
@@ -63,12 +85,12 @@ public class MemberService {
     List<ChiefDto> chiefDtos = chiefEntityList.stream().map(this::convertToChiefDto).toList();
 
     ResponseHandler responseHandler =
-            ResponseHandler.builder()
-                    .body(chiefDtos)
-                    .code(1000)
-                    .pageable(pageable)
-                    .totalPages(chiefEntityPage.getTotalPages())
-                    .build();
+        ResponseHandler.builder()
+            .body(chiefDtos)
+            .code(1000)
+            .pageable(pageable)
+            .totalPages(chiefEntityPage.getTotalPages())
+            .build();
     return ResponseHandler.getSuccessResponse(responseHandler);
   }
 

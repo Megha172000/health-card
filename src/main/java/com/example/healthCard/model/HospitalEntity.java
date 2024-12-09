@@ -27,6 +27,15 @@ public class HospitalEntity {
   @Column(name = "phone_number")
   private long phoneNumber;
 
+  @Column(name = "email_address")
+  private String emailAddress;
+
+  @Column(name = "password")
+  private String password;
+
+  @Column(name = "code")
+  private Integer code;
+
   @Column(name = "address")
   private String address;
 

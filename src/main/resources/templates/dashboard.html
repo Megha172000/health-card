@@ -283,6 +283,7 @@
                                 <thead class="blue-grey lighten-4">
                                 <tr>
                                     <th>Name</th>
+                                    <th>Email Address</th>
                                     <th>Address</th>
                                     <th>Type</th>
                                     <th>Contact Number</th>
@@ -451,6 +452,10 @@
                                             <div data-mdb-input-init class="form-outline mb-4">
                                                 <input type="text" id="name" name="name" class="form-control form-control-lg" required />
                                                 <label class="form-label" for="name">Full name</label>
+                                            </div>
+                                            <div data-mdb-input-init class="form-outline mb-4">
+                                                <input type="text" id="hospitalEmailAddress" name="hospitalEmailAddress" class="form-control form-control-lg" required />
+                                                <label class="form-label" for="hospitalEmailAddress">Email Address</label>
                                             </div>
                                             <div data-mdb-input-init class="form-outline mb-4">
                                                 <input type="text" id="address" name="address" class="form-control form-control-lg" required />
@@ -798,6 +803,7 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                     <td>${hospital.name}</td>
+                    <td>${hospital.emailAddress}</td>
                     <td>${hospital.address}</td>
                     <td>${hospital.type}</td>
                     <td>${hospital.phoneNumber}</td>
@@ -946,12 +952,14 @@
     document.getElementById('addHospitalSubmitBtn').addEventListener('click', function() {
         // Get form values
         const name = document.getElementById('name').value;
+        const emailAddress = document.getElementById('hospitalEmailAddress').value;
         const address = document.getElementById('address').value;
         const number = document.getElementById('number').value;
 
         // Prepare JSON data
         const hospitalData = {
             name: name,
+            emailAddress: emailAddress,
             address: address,
             phoneNumber: number,
             type: 'Hospital'

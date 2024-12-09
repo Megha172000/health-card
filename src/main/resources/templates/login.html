@@ -136,11 +136,15 @@
               } else {
                 localStorage.setItem("jwtToken", data.body.token);
                 localStorage.setItem("agentId", data.body.id)
+                localStorage.setItem("hospitalId", data.body.id)
 
                 setTimeout(() => {
                   if (data.body.role === "AGENT"){
                     window.location.href = "/agent-dashboard"; // Redirect on success
-                  }else {
+                  } else if (data.body.role === "Hospital"){
+                    window.location.href = "/hospital-dashboard"; // Redirect on success
+                  }
+                  else {
                     window.location.href = "/dashboard"; // Redirect on success
                   }
                 }, 500); // Delay to show loader before redirecting

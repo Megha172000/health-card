@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.example.healthCard.service.HospitalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class ContentDeliveryController {
   @Autowired AgentService agentService;
+  @Autowired
+  HospitalService hospitalService;
 
   @GetMapping("/")
   public String defaultRoute() {
@@ -56,6 +60,11 @@ public class ContentDeliveryController {
     return "create_password";
   }
 
+  @GetMapping("/create-hospital-password")
+  public String createHospitalPassword() {
+    return "create_hospital_password";
+  }
+
   @PostMapping("/create-agent-password")
   public ResponseEntity<Map<String, String>> createAgentPassword(
       @RequestBody Map<String, String> inputMap) {
@@ -69,11 +78,35 @@ public class ContentDeliveryController {
     return ResponseEntity.ok(response);
   }
 
+  @PostMapping("/create-hospital-password")
+  public ResponseEntity<Map<String, String>> createHospitalPassword(
+          @RequestBody Map<String, String> inputMap) {
+    Map<String, String> response = new HashMap<>();
+    String email = inputMap.get("email");
+    String code = inputMap.get("code");
+    String password = inputMap.get("password");
+    hospitalService.setHospitalPassword(email, Integer.parseInt(code), password);
+    response.put("jwt", "token");
+    response.put("redirectUrl", "/login"); // URL to redirect to on success
+    return ResponseEntity.ok(response);
+  }
+
   @GetMapping("activate-agent")
   public String activateAgent(@RequestParam String email, @RequestParam int code) {
     try {
       agentService.activateAgent(email, code);
       return "redirect:/create-password?email=" + email + "&code=" + code;
+      // Navigate to create password page
+    } catch (HealthCardException exception) {
+      return exception.getErrorMessage();
+    }
+  }
+
+  @GetMapping("activate-hospital")
+  public String activateHospital(@RequestParam String email, @RequestParam int code) {
+    try {
+      hospitalService.activateHospital(email, code);
+      return "redirect:/create-hospital-password?email=" + email + "&code=" + code;
       // Navigate to create password page
     } catch (HealthCardException exception) {
       return exception.getErrorMessage();
@@ -164,5 +197,10 @@ public class ContentDeliveryController {
   @GetMapping("/dashboard")
   public String dashboard() {
     return "dashboard";
+  }
+
+  @GetMapping("/hospital-dashboard")
+  public String hospitalDashboard() {
+    return "hospital_dashboard";
   }
 }
