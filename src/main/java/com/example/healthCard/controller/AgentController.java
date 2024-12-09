@@ -207,6 +207,16 @@ public class AgentController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+  @GetMapping("/list-all-members")
+  public ResponseEntity<Object> listAllMembers(
+    @RequestParam(defaultValue = "0") int page,
+    @RequestParam(defaultValue = "5") int size,
+    @RequestParam(required = false) String filter){
+    ResponseEntity<ResponseHandler> response =
+            memberService.listAllMembers(page, size, filter);
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
   @GetMapping("/list-chief-members")
   public ResponseEntity<Object> listOfChefMembers() {
     List<MemberEntity> memberEntityList = memberRepo.findAll();

@@ -49,6 +49,29 @@ public class MemberService {
     return ResponseHandler.getSuccessResponse(responseHandler);
   }
 
+  public ResponseEntity<ResponseHandler> listAllMembers(
+          int page, int size,String filter) {
+    Pageable pageable = PageRequest.of(page, size);
+    Page<ChiefEntity> chiefEntityPage;
+    if (filter != null && !filter.isEmpty()) {
+      chiefEntityPage = chiefRepo.findAllById(filter, pageable);
+    } else {
+      chiefEntityPage = chiefRepo.findAll(pageable);
+    }
+    List<ChiefEntity> chiefEntityList = chiefEntityPage.getContent();
+
+    List<ChiefDto> chiefDtos = chiefEntityList.stream().map(this::convertToChiefDto).toList();
+
+    ResponseHandler responseHandler =
+            ResponseHandler.builder()
+                    .body(chiefDtos)
+                    .code(1000)
+                    .pageable(pageable)
+                    .totalPages(chiefEntityPage.getTotalPages())
+                    .build();
+    return ResponseHandler.getSuccessResponse(responseHandler);
+  }
+
   public ChiefDto convertToChiefDto(ChiefEntity chiefEntity) {
     List<MemberEntity> memberEntities = chiefEntity.getMemberEntityList();
     List<MemberDto> memberDtos = memberEntities.stream().map(this::convertToMemberDto).toList();

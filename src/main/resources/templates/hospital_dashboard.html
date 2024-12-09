@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Health Card</title>
+    <!-- MDB icon -->
+    <link rel="icon" href="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp" type="image/x-icon">
+    <!-- Font Awesome -->
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="/css/mdb.min.css" rel="stylesheet">
+    <!-- Your custom styles (optional) -->
+    <link href="/css/style.min.css" rel="stylesheet">
+    <style>
+        .text-teal {
+            color: #008080; /* Teal color */
+        }
+
+        .map-container iframe {
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+        .pagination-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .pagination-controls i {
+            font-size: 1.5em;
+            color: #6c757d;
+        }
+
+        .pagination-controls i:hover {
+            color: #264488;
+        }
+
+        .pagination-controls .disabled {
+            color: #ccc;
+            pointer-events: none;
+            cursor: default;
+        }
+
+        .btn.teal-color-button,
+        .btn.teal-color-button:hover,
+        .btn.teal-color-button:focus,
+        .btn.teal-color-button:active,
+        .btn.teal-color-button:active:focus {
+            background-color: teal !important;
+            border-color: teal !important;
+            color: #fff !important;
+        }
+
+        .primary-color-dark,
+        .list-group-item.active {
+            background-color: teal !important;
+        }
+
+        .teal-text {
+            color: teal !important;
+        }
+
+        .sidebar-fixed .logo-wrapper img {
+            max-height: 105px;
+        }
+
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loader .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            border-width: 0.3em;
+        }
+
+    </style>
+</head>
+<body class="grey lighten-3">
+<!-- Main Navigation -->
+<header>
+    <!-- Navbar -->
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand waves-effect" href="#" target="_blank">
+                <strong class="teal-text">Home</strong>
+            </a>
+            <!-- Collapse -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- Links -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Left -->
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link waves-effect text-teal" id="navBarProfileScroll" href="#">Members
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
+                <!-- Right -->
+                <ul class="navbar-nav nav-flex-icons">
+                    <li class="nav-item">
+                        <a href="https://www.facebook.com/mdbootstrap" class="nav-link waves-effect" target="_blank">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://twitter.com/MDBootstrap" class="nav-link waves-effect" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://github.com/mdbootstrap/bootstrap-material-design" class="nav-link border border-light rounded waves-effect"
+                           target="_blank">
+                            <i class="fab fa-github mr-2"></i>MDB GitHub
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar -->
+    <!-- Sidebar -->
+    <div class="sidebar-fixed position-fixed">
+        <a class="logo-wrapper waves-effect">
+            <img src="/images/logo2.png" class="img-fluid" alt="">
+        </a>
+        <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item active waves-effect">
+                <i class="fas fa-chart-pie mr-3"></i>Home
+            </a>
+            <a href="#" class="list-group-item list-group-item-action waves-effect">
+                <i class="fas fa-map mr-3"></i>My Profile</a>
+            <a href="#memberTable" class="list-group-item list-group-item-action waves-effect" id="scrollToAgentTable">
+                <i class="fas fa-table mr-3"></i>Members</a>
+        </div>
+    </div>
+    <!-- Sidebar -->
+</header>
+<!-- Main Navigation -->
+
+<!-- Main layout -->
+<main class="pt-5 mx-lg-5">
+    <div class="container-fluid mt-5">
+        <div class="row wow fadeIn">
+            <!--Grid column-->
+            <div class="col-md-12 mb-4">
+                <!--Card-->
+                <div class="card">
+                    <!--Card content-->
+                    <div class="card-body">
+                        <!-- Header and Actions -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">Member Details</h5>
+                            <!-- Actions -->
+                            <div class="d-flex align-items-center">
+                                <form class="d-flex align-items-center" onsubmit="fetchMemberData(0); return false;">
+                                    <!-- Search input -->
+                                    <input type="search" id="memberSearchFilter" placeholder="Search..." aria-label="Search" class="form-control mr-2">
+                                    <button class="btn btn-secondary btn-sm teal-color-button" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </form>
+                                <!-- Add Hospital Button -->
+                                <button class="btn btn-secondary btn-sm ml-3 teal-color-button" style="color: #0b2e13" id="addRowButton" data-toggle="modal" data-target="#addHospitalModal">Add Member</button>
+                            </div>
+                        </div>
+                        <!-- Responsive Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover wow animate__animated animate__fadeIn" id="memberTable">
+                                <!-- Table head -->
+                                <thead class="blue-grey lighten-4">
+                                <tr>
+                                    <th>UID</th>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Email Address</th>
+                                    <th>Contact Number</th>
+                                    <th>Identity Type</th>
+                                    <th>Identity Number</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <!-- Table head -->
+                                <!-- Table body -->
+                                <tbody>
+                                <!-- Dynamic rows will be appended here -->
+                                </tbody>
+                                <!-- Table body -->
+                            </table>
+                        </div>
+
+                        <div id="paginationControls" class="container-fluid pagination-controls">
+                            <i id="prevPage" class="fas fa-chevron-left" onclick="changePage(currentPage - 1)" style="cursor: pointer;"></i>
+                            <i id="nextPage" class="fas fa-chevron-right float-right" onclick="changePage(currentPage + 1)" style="cursor: pointer;"></i>
+                        </div>
+                        <!-- Responsive Table -->
+                    </div>
+                </div>
+                <!--/.Card-->
+            </div>
+        </div>
+        <!-- Form -->
+        <div class="card mb-4 wow fadeIn">
+            <div class="card-body">
+                <form id="memberForm" onsubmit="submitForm(); return false;">
+                <div class="form-group">
+                        <label for="chiefName">Chief Member Name</label>
+                        <input type="text" class="form-control" id="chiefName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chiefEmail">Email Address</label>
+                        <input type="email" class="form-control" id="chiefEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chiefPhoneNumber">Mobile Number</label>
+                        <input type="text" class="form-control" id="chiefPhoneNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chiefAddress">Address</label>
+                        <input type="text" class="form-control" id="chiefAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hospitalName">Hospital Name</label>
+                        <select class="form-control" id="hospitalName" required>
+                            <option value="">Select Hospital</option>
+                            <!-- Hospital options will be populated here dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="chiefIdentityType">Identity Type</label>
+                        <input type="text" class="form-control" id="chiefIdentityType" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="chiefIdentityNumber">Identity Number</label>
+                        <input type="text" class="form-control" id="chiefIdentityNumber" required>
+                    </div>
+                    <div id="memberAccordion">
+                        <button type="button" class="btn btn-primary mb-3" id="addMemberBtn" onclick="addMemberForm()">Add Another Member</button>
+                    </div>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="modal fade" id="cardIdModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog cascading-modal modal-avatar modal-sm" role="document">
+        <!--Content-->
+        <div class="modal-content">
+            <!--Body-->
+            <div class="modal-body text-center mb-1">
+
+                <h5 class="mt-1 mb-2">Your Card ID</h5>
+
+                <p id="cardId"></p>
+
+            </div>
+
+        </div>
+        <!--/.Content-->
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+    <div class="footer-copyright py-3">
+        © 2024 Copyright:
+        <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank"> MDBootstrap.com </a>
+    </div>
+</footer>
+
+<!-- Toast notification -->
+<div class="toast-container"></div>
+
+<!-- Loader -->
+<div id="loader" class="loader">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden"></span>
+    </div>
+</div>
+<!-- Footer -->
+
+<!-- SCRIPTS -->
+<script type="text/javascript" src="/js/jquery-3.4.1.min.js"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="/js/popper.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="/js/mdb.min.js"></script>
+<!-- Initializations -->
+<script type="text/javascript">
+    // Animations initialization
+    new WOW().init();
+
+</script>
+
+<script>
+    let memberCount = 0;
+    const maxMembers = 4;
+
+    function addMemberForm() {
+        if (memberCount < maxMembers) {
+            memberCount++;
+            const memberForm = document.createElement('div');
+            memberForm.className = 'form-group';
+            memberForm.id = 'memberForm' + memberCount;
+            memberForm.innerHTML = `
+                <div class="form-group">
+                    <label for="memberName${memberCount}">Member Name</label>
+                    <input type="text" class="form-control" id="memberName${memberCount}" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberMobile${memberCount}">Mobile Number</label>
+                    <input type="text" class="form-control" id="memberMobile${memberCount}" required>
+                </div>
+                <button type="button" class="btn btn-danger mb-3" onclick="removeMemberForm(${memberCount})">Remove Member</button>
+                <hr>
+            `;
+            document.getElementById('memberAccordion').insertBefore(memberForm, document.getElementById('addMemberBtn'));
+        }
+
+        if (memberCount === maxMembers) {
+            document.getElementById('addMemberBtn').disabled = true;
+        }
+    }
+
+    function removeMemberForm(id) {
+        const memberForm = document.getElementById('memberForm' + id);
+        document.getElementById('memberAccordion').removeChild(memberForm);
+        memberCount--;
+
+        if (memberCount < maxMembers) {
+            document.getElementById('addMemberBtn').disabled = false;
+        }
+    }
+
+    function getJwtToken() {
+        return localStorage.getItem('jwtToken');
+    }
+    function fetchWithAuth(url, options = {}) {
+        const token = getJwtToken();
+        if (token) {
+            options.headers = {
+                ...options.headers,
+                'Authorization': `Bearer ${token}`,
+            };
+        }
+        return fetch(url, options);
+    }
+
+    function loadHospitals() {
+        // Example API endpoint to fetch hospitals (you can modify this according to your API)
+        const apiUrl = '/list-hospital-name';
+
+        // Make the API call to fetch hospitals
+        fetchWithAuth(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.body.body) {
+                    const hospitalSelect = document.getElementById('hospitalName');
+
+                    // Clear existing options
+                    hospitalSelect.innerHTML = '<option value="">Select Hospital</option>';
+
+                    // Add hospital options dynamically
+                    data.body.body.body.forEach(hospital => {
+                        const option = document.createElement('option');
+                        option.value = hospital;  // Assuming the hospital object has an 'id' field
+                        option.textContent = hospital;  // Assuming the hospital object has a 'name' field
+                        hospitalSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('No hospital data found or invalid response format');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching hospitals:', error);
+            });
+    }
+
+
+    // Function to add a new member input field dynamically
+
+
+    // Function to collect form data and send the POST request
+    function submitForm() {
+        document.getElementById('loader').classList.add('active');
+        // Get chief member details
+        const chiefMember = {
+            agentId: localStorage.getItem('agentId'),
+            name: document.getElementById('chiefName').value,
+            email: document.getElementById('chiefEmail').value,
+            hospitalName: document.getElementById('hospitalName').value,
+            identityType: document.getElementById('chiefIdentityType').value,
+            identityNumber: document.getElementById('chiefIdentityNumber').value,
+            address: document.getElementById('chiefAddress').value,
+            phoneNumber: document.getElementById('chiefPhoneNumber').value,
+        };
+
+        // Array to store member details
+        const members = [];
+
+        // Collect additional members' details
+        for (let i = 1; i <= memberCount; i++) {
+            const name = document.getElementById(`memberName${i}`);
+            const phoneNumber = document.getElementById(`memberMobile${i}`);
+
+            // Only add members with non-empty values (in case some are removed)
+            if (name && phoneNumber) {
+                members.push({
+                    name: name.value,
+                    phoneNumber: phoneNumber.value
+                });
+            }
+        }
+
+        // Prepare the final request body
+        const requestBody = {
+            ...chiefMember,
+            members: members
+        };
+
+        // Send the request
+        fetchWithAuth('/add-members', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        })
+
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                fetchMemberData(0);
+                document.getElementById('memberForm').reset();
+                document.getElementById("cardId").innerText = data.body;
+                $('#cardIdModal').modal('show');
+                showToast("Member added successfully."); // Use the success message from API response
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                showToast(error.message, 'danger'); // Use the error message from API response
+            })
+            .finally(() => {
+            document.getElementById('loader').classList.remove('active');
+        });
+    }
+
+    function showToast(message, type = 'success') {
+        const toastContainer = document.querySelector('.toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-white bg-${type} border-0 show`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+
+        toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-mdb-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toastContainer.removeChild(toast);
+        }, 5000);
+    }
+
+    let currentPage = 0;
+    const pageSize = 5; // Number of items per page
+
+    function fetchMemberData(page = 0) {
+        document.getElementById('loader').classList.add('active');
+        const filter = document.getElementById('memberSearchFilter').value.trim(); // Get the filter input value
+        // Construct the URL with query parameters
+        let url = `/list-all-members?page=${page}&size=${pageSize}`;
+        if (filter) {
+            url += `&filter=${encodeURIComponent(filter)}`; // Add the filter parameter if it's not empty
+        }
+        fetchWithAuth(url)
+            .then(response => {
+                if (response.status === 401) {  // Check for 401 Unauthorized
+                    window.location.href = '/login';  // Redirect to login page
+                    return;  // Stop further execution
+                }
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tableBody = document.querySelector('#memberTable tbody');
+                tableBody.innerHTML = ''; // Clear any existing rows
+
+                // Append rows to the table
+                data.body.body.forEach(member => {
+                    const row = document.createElement('tr');
+                    console.log(member.id);
+                    row.innerHTML = `
+                    <td>${member.id}</td>
+                    <td>${member.name}</td>
+                    <td>${member.address}</td>
+                    <td>${member.emailAddress}</td>
+                    <td>${member.phoneNumber}</td>
+                    <td>${member.identityType}</td>
+                    <td>${member.identityNumber}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary dropdown-toggle btn-sm teal-color-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Actions
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#" onclick="editRow(${member.id})">Edit</a>
+                                <a class="dropdown-item" href="#" onclick="deleteRow('${member.id}'); return false;">Delete</a>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                    tableBody.appendChild(row);
+                });
+
+                // Update pagination controls
+                updatePaginationControls(data);
+            })
+            .catch(error => {
+                console.error('Error fetching member data:', error);
+            })
+            .finally(() => {
+                document.getElementById('loader').classList.remove('active');
+            });
+    }
+
+    function updatePaginationControls(data) {
+        const prevPageIcon = document.getElementById('prevPage');
+        const nextPageIcon = document.getElementById('nextPage');
+
+        // Enable/disable previous button
+        if (data.body.pageable.pageNumber > 0) {
+            prevPageIcon.classList.remove('disabled');
+            prevPageIcon.onclick = function() { changePage(data.body.pageable.pageNumber - 1); };
+            prevPageIcon.style.cursor = 'pointer';
+        } else {
+            prevPageIcon.classList.add('disabled');
+            prevPageIcon.onclick = null;
+            prevPageIcon.style.cursor = 'default';
+        }
+
+        // Enable/disable next button
+        if (data.body.pageable.pageNumber < data.body.totalPages - 1) {
+            nextPageIcon.classList.remove('disabled');
+            nextPageIcon.onclick = function() { changePage(data.body.pageable.pageNumber + 1); };
+            nextPageIcon.style.cursor = 'pointer';
+        } else {
+            nextPageIcon.classList.add('disabled');
+            nextPageIcon.onclick = null;
+            nextPageIcon.style.cursor = 'default';
+        }
+    }
+
+    function changePage(page) {
+        currentPage = page;
+        fetchMemberData(page);
+    }
+
+    window.addEventListener('load', fetchMemberData(0));
+    document.addEventListener('DOMContentLoaded', loadHospitals);
+
+</script>
+</body>
+</html>

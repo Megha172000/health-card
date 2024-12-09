@@ -163,6 +163,8 @@
                 <i class="fas fa-table mr-3"></i>Agents</a>
             <a href="#hospitalTable" class="list-group-item list-group-item-action waves-effect" id="scrollToTable">
                 <i class="fas fa-user mr-3"></i>Hospitals</a>
+            <a href="#memberTable" class="list-group-item list-group-item-action waves-effect" id="scrollToMemberTable">
+                <i class="fas fa-user mr-3"></i>Members</a>
         </div>
     </div>
     <!-- Sidebar -->
@@ -359,6 +361,65 @@
                         <div id="agentPaginationControls" class="container-fluid pagination-controls">
                             <i id="prevPageAgent" class="fas fa-chevron-left" onclick="changeAgentPage(currentAgentPage - 1)" style="cursor: pointer;"></i>
                             <i id="nextPageAgent" class="fas fa-chevron-right float-right" onclick="changeAgentPage(currentAgentPage + 1)" style="cursor: pointer;"></i>
+                        </div>
+                        <!-- Responsive Table -->
+                    </div>
+                </div>
+                <!--/.Card-->
+            </div>
+        </div>
+
+        <div class="row wow fadeIn">
+            <!--Grid column-->
+            <div class="col-md-12 mb-4">
+                <!--Card-->
+                <div class="card">
+                    <!--Card content-->
+                    <div class="card-body">
+                        <!-- Header and Actions -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">Member Details</h5>
+                            <!-- Actions -->
+                            <div class="d-flex align-items-center">
+                                <form class="d-flex align-items-center" onsubmit="fetchMemberData(0); return false;">
+                                    <!-- Search input -->
+                                    <input type="search" id="memberSearchFilter" placeholder="Search..." aria-label="Search" class="form-control mr-2">
+                                    <button class="btn btn-secondary btn-sm teal-color-button" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </form>
+                                <!-- Add Hospital Button -->
+                                <button class="btn btn-secondary btn-sm ml-3 teal-color-button" style="color: #0b2e13" id="addMemberButton" data-toggle="modal" data-target="#addMember">Add Member</button>
+                            </div>
+                        </div>
+                        <!-- Responsive Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover wow animate__animated animate__fadeIn" id="memberTable">
+                                <!-- Table head -->
+                                <thead class="blue-grey lighten-4">
+                                <tr>
+                                    <th>UID</th>
+                                    <th>Name</th>
+                                    <th>Address</th>
+                                    <th>Email Address</th>
+                                    <th>Contact Number</th>
+                                    <th>Identity Type</th>
+                                    <th>Identity Number</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <!-- Table head -->
+                                <!-- Table body -->
+                                <tbody>
+                                <!-- Dynamic rows will be appended here -->
+                                </tbody>
+                                <!-- Table body -->
+                            </table>
+                        </div>
+
+                        <div id="paginationControlsMembers" class="container-fluid pagination-controls">
+                            <i id="prevPageMembers" class="fas fa-chevron-left" onclick="changePage(currentPage - 1)" style="cursor: pointer;"></i>
+                            <i id="nextPageMembers" class="fas fa-chevron-right float-right" onclick="changePage(currentPage + 1)" style="cursor: pointer;"></i>
                         </div>
                         <!-- Responsive Table -->
                     </div>
@@ -1124,6 +1185,7 @@
 
     window.addEventListener('load', fetchHospitalData(0));
     window.addEventListener('load', fetchAgentData(0));
+    window.addEventListener('load', fetchMemberData(0));
 
     document.getElementById('scrollToTable').addEventListener('click', function (e) {
         e.preventDefault();
@@ -1140,6 +1202,18 @@
     document.getElementById('scrollToAgentTable').addEventListener('click', function (e) {
         e.preventDefault();
         const tableElement = document.getElementById('agentTable');
+        const headerOffset = 150; // Adjust this value to match the height of your fixed navbar
+        const elementPosition = tableElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+        });
+    });
+    document.getElementById('scrollToMemberTable').addEventListener('click', function (e) {
+        e.preventDefault();
+        const tableElement = document.getElementById('memberTable');
         const headerOffset = 150; // Adjust this value to match the height of your fixed navbar
         const elementPosition = tableElement.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
@@ -1176,6 +1250,101 @@
     document.getElementById('addRowButton').addEventListener('click', function() {
         $('#addHospitalModal').modal('show');
     });
+
+    function fetchMemberData(page = 0) {
+        document.getElementById('loader').classList.add('active');
+        const filter = document.getElementById('memberSearchFilter').value.trim(); // Get the filter input value
+        // Construct the URL with query parameters
+        let url = `/list-all-members?page=${page}&size=${pageSize}`;
+        if (filter) {
+            url += `&filter=${encodeURIComponent(filter)}`; // Add the filter parameter if it's not empty
+        }
+        fetchWithAuth(url)
+            .then(response => {
+                if (response.status === 401) {  // Check for 401 Unauthorized
+                    window.location.href = '/login';  // Redirect to login page
+                    return;  // Stop further execution
+                }
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tableBody = document.querySelector('#memberTable tbody');
+                tableBody.innerHTML = ''; // Clear any existing rows
+
+                // Append rows to the table
+                data.body.body.forEach(member => {
+                    const row = document.createElement('tr');
+                    console.log(member.id);
+                    row.innerHTML = `
+                    <td>${member.id}</td>
+                    <td>${member.name}</td>
+                    <td>${member.address}</td>
+                    <td>${member.emailAddress}</td>
+                    <td>${member.phoneNumber}</td>
+                    <td>${member.identityType}</td>
+                    <td>${member.identityNumber}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary dropdown-toggle btn-sm teal-color-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Actions
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#" onclick="editRow(${member.id})">Edit</a>
+                                <a class="dropdown-item" href="#" onclick="deleteRow('${member.id}'); return false;">Delete</a>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                    tableBody.appendChild(row);
+                });
+
+                // Update pagination controls
+                updateMemberPaginationControls(data);
+            })
+            .catch(error => {
+                console.error('Error fetching member data:', error);
+            })
+            .finally(() => {
+                document.getElementById('loader').classList.remove('active');
+            });
+    }
+
+    let currentMemberPage = 0;
+
+    function updateMemberPaginationControls(data) {
+        const prevPageIcon = document.getElementById('prevPageMembers');
+        const nextPageIcon = document.getElementById('nextPageMembers');
+
+        // Enable/disable previous button
+        if (data.body.pageable.pageNumber > 0) {
+            prevPageIcon.classList.remove('disabled');
+            prevPageIcon.onclick = function() { changeMemberPage(data.body.pageable.pageNumber - 1); };
+            prevPageIcon.style.cursor = 'pointer';
+        } else {
+            prevPageIcon.classList.add('disabled');
+            prevPageIcon.onclick = null;
+            prevPageIcon.style.cursor = 'default';
+        }
+
+        // Enable/disable next button
+        if (data.body.pageable.pageNumber < data.body.totalPages - 1) {
+            nextPageIcon.classList.remove('disabled');
+            nextPageIcon.onclick = function() { changeMemberPage(data.body.pageable.pageNumber + 1); };
+            nextPageIcon.style.cursor = 'pointer';
+        } else {
+            nextPageIcon.classList.add('disabled');
+            nextPageIcon.onclick = null;
+            nextPageIcon.style.cursor = 'default';
+        }
+    }
+
+    function changeMemberPage(page) {
+        currentMemberPage = page;
+        fetchMemberData(page);
+    }
 
 </script>
 </body>
